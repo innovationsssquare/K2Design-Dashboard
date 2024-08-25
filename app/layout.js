@@ -1,5 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
+import Nav from "@/components/Navbarcomponets/Nav";
+import Sidenav from "@/components/Navbarcomponets/Sidenav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,7 +14,20 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <Providers>
+          <main className="grid grid-cols-1 md:grid-cols-[auto,1fr] bg-[#f7f7f7]  w-full">
+            <div className="w-full  h-full">
+              <Sidenav />
+            </div>
+
+            <section className="flex  flex-col gap-4 w-full h-full ">
+              <Nav />
+              {children}
+            </section>
+          </main>
+        </Providers>
+      </body>
     </html>
   );
 }
