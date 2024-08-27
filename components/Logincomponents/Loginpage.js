@@ -6,6 +6,7 @@ import { FaUser } from "react-icons/fa";
 import { IoMdLock } from "react-icons/io";
 import Cookies from "js-cookie";
 import { Tabs, Tab } from "@nextui-org/react";
+import { toast } from "sonner"
 
 
 import {
@@ -181,7 +182,7 @@ const Loginpage = () => {
                   <div className="bg-gray-200 rounded-md w-11/12 mx-auto h-12 flex justify-start px-2 items-center gap-4">
                     <FaUser className="text-[#1b181e]" size={24} />
                     <input
-                      className="outline-none bg-transparent text-[#1b181e] placeholder:text-wh[#1b181e]ite placeholder:text-sm placeholder:font-medium"
+                      className="outline-none bg-transparent text-[#1b181e] placeholder:text-[#1b181e] placeholder:text-sm placeholder:font-medium"
                       placeholder="Email"
                       value={superAdminEmail}
                       onChange={(e) => setSuperAdminEmail(e.target.value)}
