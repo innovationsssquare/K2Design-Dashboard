@@ -152,46 +152,46 @@ const Loginpage = () => {
 
   return (
     <>
-      <main className="h-screen w-full mx-auto  flex justify-center items-center flex-col">
-        <div className="md:w-96 lg:w-96 w-11/12 h-auto rounded-lg overflow-hidden mx-auto">
-          <div className="flex gap-3 bg-[#172953] justify-center items-center py-2  ">
-            <Image alt=" logo" height={40} radius="sm" src={Logo} width={40} />
+      <main className="h-screen w-full mx-auto bg-[#f7f7f7]   flex justify-center items-center flex-col">
+        <div className="md:w-96 lg:w-96 w-11/12 h-auto rounded-lg overflow-hidden mx-auto boxshadow">
+          <div className="flex  bg-[#1b181e] justify-center items-center py-2  ">
+            <Image alt="logo" src={Logo}  className="h-16 w-full object-contain" />
            
           </div>
-          <div className="flex gap-3 justify-center bg-white items-center py-4 flex-col">
+          <div className="flex gap-3 justify-center bg-white items-center py-2  flex-col">
             <div className="flex justify-center items-center py-2">
-              <h2 className="text-white font-semibold ">Login</h2>
+              <h2 className="text-[#1b181e] font-semibold ">Login</h2>
             </div>
             <Tabs
               fullWidth
               classNames={{
                 tabList:
-                  "gap-6 w-11/12 mx-auto relative bg-[#324970] hidden rounded-md p-0 border-b border-divider",
-                cursor: "w-full buttongradient",
+                  "gap-6 w-11/12 mx-auto relative bg-transparent hidden rounded-md p-0 ",
+                cursor: "w-full bg-transparent  ",
                 tab: " px-2 h-10",
-                tabContent: "group-data-[selected=true]:text-white text-white",
+                tabContent: "group-data-[selected=true]:text-black text-black ",
               }}
               size="md"
               aria-label="Tabs form"
               selectedKey={selected}
               onSelectionChange={setSelected}
             >
-              <Tab key="Superadminlogin" title="Super Admin" className="w-full">
+              <Tab key="Superadminlogin" title="Login" className="w-full">
                 <div className="w-full flex justify-center items-center flex-col gap-3">
-                  <div className="bg-[#324970] rounded-md w-11/12 mx-auto h-12 flex justify-start px-2 items-center gap-4">
-                    <FaUser className="text-white" size={24} />
+                  <div className="bg-gray-200 rounded-md w-11/12 mx-auto h-12 flex justify-start px-2 items-center gap-4">
+                    <FaUser className="text-[#1b181e]" size={24} />
                     <input
-                      className="outline-none bg-transparent text-white placeholder:text-white placeholder:text-sm placeholder:font-medium"
-                      placeholder="User Name"
+                      className="outline-none bg-transparent text-[#1b181e] placeholder:text-wh[#1b181e]ite placeholder:text-sm placeholder:font-medium"
+                      placeholder="Email"
                       value={superAdminEmail}
                       onChange={(e) => setSuperAdminEmail(e.target.value)}
                       required
                     />
                   </div>
-                  <div className="bg-[#324970] rounded-md w-11/12 mx-auto h-12 flex justify-start px-2 items-center gap-4">
-                    <IoMdLock className="text-white" size={24} />
+                  <div className="bg-gray-200 rounded-md w-11/12 mx-auto h-12 flex justify-start px-2 items-center gap-4">
+                    <IoMdLock className="text-[#1b181e]" size={24} />
                     <input
-                      className="outline-none bg-transparent text-white placeholder:text-white placeholder:text-sm placeholder:font-medium w-full"
+                      className="outline-none bg-transparent text-[#1b181e] placeholder:text-[#1b181e] placeholder:text-sm placeholder:font-medium w-full"
                       placeholder="Password"
                       type="password"
                       value={superAdminPassword}
@@ -201,37 +201,14 @@ const Loginpage = () => {
                   </div>
                 </div>
               </Tab>
-              <Tab key="Adimnlogin" title="Admin" className="w-full">
-                <div className="w-full flex justify-center items-center flex-col gap-3">
-                  <div className="bg-[#324970] rounded-md w-11/12 mx-auto h-12 flex justify-start px-2 items-center gap-4">
-                    <FaUser className="text-white" size={24} />
-                    <input
-                      className="outline-none bg-transparent   text-white placeholder:text-white placeholder:text-sm placeholder:font-medium"
-                      placeholder="User Name"
-                      value={adminEmail}
-                      onChange={(e) => setAdminEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="bg-[#324970] rounded-md w-11/12 mx-auto h-12 flex justify-start px-2 items-center gap-4">
-                    <IoMdLock className="text-white" size={24} />
-                    <input
-                      className="outline-none bg-transparent text-white placeholder:text-white placeholder:text-sm placeholder:font-medium w-full"
-                      placeholder="Password"
-                      type="password"
-                      value={adminPassword}
-                      onChange={(e) => setAdminPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-              </Tab>
+             
             </Tabs>
 
             <div className="flex py-2 px-4 justify-between w-full">
               <Checkbox
+              color="default"
                 classNames={{
-                  label: "text-small text-white opacity-70",
+                  label: "text-small text-[#1b181e] opacity-70",
                 }}
                 isSelected={rememberMe}
                 onValueChange={setRememberMe}
@@ -242,7 +219,7 @@ const Loginpage = () => {
                 color="primary"
                 href="#"
                 size="sm"
-                className="text-white opacity-70"
+                className="text-[#1b181e] opacity-70"
               >
                 Forgot password?
               </Link>
