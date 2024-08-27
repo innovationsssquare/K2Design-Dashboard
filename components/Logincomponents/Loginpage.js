@@ -227,9 +227,7 @@ const Loginpage = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center items-center fixed bottom-2">
-          <p className="text-sm font-semibold text-white">Designed by AWT</p>
-        </div>
+      
       </main>
      
     </>
