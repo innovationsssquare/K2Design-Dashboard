@@ -60,7 +60,7 @@ export default function Nav() {
     <Navbar isBordered maxWidth="full" position="sticky" >
       <NavbarContent justify="start">
         <NavbarBrand className="mr-4">
-        <Sheet>
+          <Sheet>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="sm:hidden">
                 <PanelLeft className="h-5 w-5" />

@@ -7,8 +7,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-SquareChevronDown,
-LogOut,
+  SquareChevronDown,
+  LogOut,
   Copy,
   CreditCard,
   File,
@@ -23,11 +23,13 @@ LogOut,
   Settings,
   ShoppingCart,
   Truck,
- LayoutDashboard
+  LayoutDashboard,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { Tabs, Tab,Button } from "@nextui-org/react";
+import { Tabs, Tab, Button } from "@nextui-org/react";
+import Image from "next/image";
+import LOGO from "../../public/LOGO.png";
 // import { IoPeople } from "react-icons/io5";
 // import { MdMeetingRoom } from "react-icons/md";
 // import { FaIndianRupeeSign } from "react-icons/fa6";
@@ -48,11 +50,11 @@ const Sidenav = () => {
       case "/":
         setSelected("Dashboard");
         break;
-      case "/Tenants":
-        setSelected("Tenants");
+      case "/Manageorders":
+        setSelected("Manage Orders");
         break;
-      case "/Rooms":
-        setSelected("Rooms");
+      case "/Managecategory":
+        setSelected("Manage Category");
         break;
       case "/Payments":
         setSelected("Payments");
@@ -87,11 +89,11 @@ const Sidenav = () => {
       case "Dashboard":
         router.push("/");
         break;
-      case "Tenants":
-        router.push("/Tenants");
+      case "Manage Orders":
+        router.push("/Manageorders");
         break;
-      case "Rooms":
-        router.push("/Rooms");
+      case "Manage Category":
+        router.push("/Managecategory");
         break;
       case "Payments":
         router.push("/Payments");
@@ -121,7 +123,12 @@ const Sidenav = () => {
   };
 
   return (
-    <aside className=" sticky top-0 left-0 z-10 hidden w-60 h-screen flex-col border-r bg-[#1b181e] sm:flex">
+    <aside className=" sticky top-0 left-0 z-10 hidden w-60 h-screen flex-col items-center border-r bg-[#1b181e] sm:flex">
+      <Image
+        className="h-28 w-28  "
+        src={LOGO}
+        alt="logo"
+      />
       <nav className="flex flex-col items-start gap-4 px-2 sm:py-5">
         <Tabs
           aria-label="Options"
@@ -148,7 +155,7 @@ const Sidenav = () => {
             }
           ></Tab>
           <Tab
-            key="Orders"
+            key="Manage Orders"
             title={
               <div className="flex items-center  w-44  gap-4">
                 <ShoppingCart size={20} />
@@ -168,13 +175,13 @@ const Sidenav = () => {
         </Tabs>
       </nav>
       <nav className="mt-auto flex flex-col items-start gap-4 px-2 sm:py-5">
-      <Button
-            // onPress={onOpen}
-            className="flex items-center  w-full justify-start bg-transparent  gap-4 text-white font-semibold"
-          >
-            <LogOut size={24} />
-            <span>Logout</span>
-          </Button>
+        <Button
+          // onPress={onOpen}
+          className="flex items-center  w-full justify-start bg-transparent  gap-4 text-white font-semibold"
+        >
+          <LogOut size={24} />
+          <span>Logout</span>
+        </Button>
       </nav>
     </aside>
   );

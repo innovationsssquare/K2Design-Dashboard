@@ -16,16 +16,16 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <main className="grid grid-cols-1 md:grid-cols-[auto,1fr] bg-[#f7f7f7]  w-full">
+          {/* <main className="grid grid-cols-1 md:grid-cols-[auto,1fr] bg-[#f7f7f7]  w-full">
             <div className="w-full  h-full">
               <Sidenav />
             </div>
 
             <section className="flex  flex-col gap-4 w-full h-full ">
-              <Nav />
+              <Nav /> */}
               {children}
-            </section>
-          </main>
+            {/* </section>
+          </main> */}
         </Providers>
       </body>
     </html>
