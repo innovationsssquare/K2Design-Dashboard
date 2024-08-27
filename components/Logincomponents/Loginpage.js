@@ -154,8 +154,8 @@ const Loginpage = () => {
     <>
       <main className="h-screen w-full mx-auto bg-[#f7f7f7]   flex justify-center items-center flex-col">
         <div className="md:w-96 lg:w-96 w-11/12 h-auto rounded-lg overflow-hidden mx-auto boxshadow">
-          <div className="flex  bg-[#1b181e] justify-center items-center py-2  ">
-            <Image alt="logo" src={Logo}  className="h-16 w-full object-contain" />
+          <div className="flex  bg-[#1b181e] justify-center items-center   ">
+            <Image alt="logo" src={Logo}  className="h-24 w-full object-contain" />
            
           </div>
           <div className="flex gap-3 justify-center bg-white items-center py-2  flex-col">
