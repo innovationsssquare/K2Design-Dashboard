@@ -24,6 +24,7 @@ import {
   ShoppingCart,
   Truck,
   LayoutDashboard,
+  PackageSearch
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -56,8 +57,8 @@ const Sidenav = () => {
       case "/Managecategory":
         setSelected("Manage Category");
         break;
-      case "/Payments":
-        setSelected("Payments");
+      case "/Manageproducts":
+        setSelected("Manage Products");
         break;
       case "/Expense":
         setSelected("Expense");
@@ -95,15 +96,10 @@ const Sidenav = () => {
       case "Manage Category":
         router.push("/Managecategory");
         break;
-      case "Payments":
-        router.push("/Payments");
+      case "Manage Products":
+        router.push("/Manageproducts");
         break;
-      case "Expense":
-        router.push("/Expense");
-        break;
-      case "Maintenance":
-        router.push("/Maintenance");
-        break;
+     
       case "Staff":
         router.push("/Ourstaff");
         break;
@@ -171,7 +167,18 @@ const Sidenav = () => {
                 <span className="text-sm">Manage Category</span>
               </div>
             }
-          ></Tab>
+          >                
+          </Tab>
+          <Tab
+            key="Manage Products"
+            title={
+              <div className="flex items-center  w-44  gap-4">
+                <PackageSearch size={20} />
+                <span className="text-sm">Manage Products</span>
+              </div>
+            }
+          >                
+          </Tab>
         </Tabs>
       </nav>
       <nav className="mt-auto flex flex-col items-start gap-4 px-2 sm:py-5">
