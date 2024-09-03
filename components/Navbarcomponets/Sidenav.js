@@ -132,7 +132,7 @@ const Sidenav = () => {
           classNames={{
             tabList:
               " w-52 relative rounded-none p-0 bg-transparent text-white  ",
-            cursor: "w-full bg-[#323035] border-l-4 ",
+            cursor: "w-full bg-[#323035] border-l-4 border-[#146eb4] ",
             tab: "w-full px-0 lg:h-9 md:h-8 sm:h-6 h-4  ",
             tabContent:
               "group-data-[selected=true]:text-white font-bold text-[#cccccc]",
