@@ -20,6 +20,7 @@ import {
 import { Plus, Search, ChevronDown, EllipsisVertical } from "lucide-react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/react";
 import Addcategory from "@/components/Managecategory/Addcategory";
+import {Accordion, AccordionItem} from "@nextui-org/react";
 
 const statusColorMap = {
   active: "success",
@@ -581,6 +582,7 @@ export default function Managecategory() {
 
       <Modal
         backdrop="opaque"
+  isDismissable={false} isKeyboardDismissDisabled={true}
         isOpen={isOpen}
         size="4xl"
         onOpenChange={onOpenChange}
