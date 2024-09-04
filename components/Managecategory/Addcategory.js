@@ -13,21 +13,10 @@ import { Label } from "@/components/ui/label";
 import {
   Modal,
   ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
-  useDisclosure,
 } from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
+import { Calculator, Calendar, Smile } from "lucide-react";
 
 import {
   Command,
@@ -35,10 +24,10 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
+  CommandList, 
 } from "@/components/ui/command";
+import {Createcategoryapi,Uploaddocapi} from "../../lib/API/Category"
+import {CreateSubcategoryapi,Uploaddocsubcategoryapi} from "../../lib/API/Subcategory"
 
 const Addcategory = () => {
   const [isSelected, setIsSelected] = React.useState(false);
@@ -46,7 +35,7 @@ const Addcategory = () => {
   const inputRef = React.useRef(null);
 
   const handleInputClick = () => {
-    setIsModalOpen(true); // Open the modal when the input is clicked
+    setIsModalOpen(true); 
   };
 
   return (
@@ -112,7 +101,7 @@ const Addcategory = () => {
       <Modal
         backdrop="opaque"
         isOpen={isModalOpen}
-        size="2xl"
+        size="lg"
         onOpenChange={setIsModalOpen}
         motionProps={{
           variants: {
@@ -151,16 +140,13 @@ const Addcategory = () => {
                       <Smile className="mr-2 h-4 w-4" />
                       <span>Media Printing</span>
                     </CommandItem>
-                    <CommandItem >
+                    <CommandItem>
                       <Calculator className="mr-2 h-4 w-4" />
                       <span>Vinyl Letters</span>
                     </CommandItem>
                   </CommandGroup>
-                 
-               
                 </CommandList>
               </Command>
-             
             </>
           )}
         </ModalContent>

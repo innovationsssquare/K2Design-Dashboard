@@ -397,7 +397,7 @@ export default function Managecategory() {
             isClearable
             classNames={{
               base: "w-full sm:max-w-[44%]",
-              inputWrapper: "border-1",
+              inputWrapper: "border-1 ",
             }}
             placeholder="Search by name..."
             size="sm"
@@ -409,7 +409,7 @@ export default function Managecategory() {
           />
           <div className="flex gap-3">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger className="hidden sm:flex ">
                 <Button
                   endContent={<ChevronDown className="text-small" />}
                   size="sm"
@@ -581,7 +581,7 @@ export default function Managecategory() {
         backdrop="opaque"
   isDismissable={false} isKeyboardDismissDisabled={true}
         isOpen={isOpen}
-        size="4xl"
+        size="2xl"
         onOpenChange={onOpenChange}
         motionProps={{
           variants: {
