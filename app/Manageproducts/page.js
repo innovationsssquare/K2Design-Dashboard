@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   Table,
@@ -17,8 +17,9 @@ import {
   User,
   Pagination,
 } from "@nextui-org/react";
-import {Plus,Search,ChevronDown,EllipsisVertical} from "lucide-react"
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/react";
+import { Plus, Search, ChevronDown, EllipsisVertical } from "lucide-react";
+import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
+import Addproducts from "@/components/Manageproducts/Addproducts";
 
 const statusColorMap = {
   active: "success",
@@ -28,20 +29,20 @@ const statusColorMap = {
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 const columns = [
-  {name: "ID", uid: "id", sortable: true},
-  {name: "NAME", uid: "name", sortable: true},
-  {name: "AGE", uid: "age", sortable: true},
-  {name: "ROLE", uid: "role", sortable: true},
-  {name: "TEAM", uid: "team"},
-  {name: "EMAIL", uid: "email"},
-  {name: "STATUS", uid: "status", sortable: true},
-  {name: "ACTIONS", uid: "actions"},
+  { name: "ID", uid: "id", sortable: true },
+  { name: "NAME", uid: "name", sortable: true },
+  { name: "AGE", uid: "age", sortable: true },
+  { name: "ROLE", uid: "role", sortable: true },
+  { name: "TEAM", uid: "team" },
+  { name: "EMAIL", uid: "email" },
+  { name: "STATUS", uid: "status", sortable: true },
+  { name: "ACTIONS", uid: "actions" },
 ];
 
 const statusOptions = [
-  {name: "Active", uid: "active"},
-  {name: "Paused", uid: "paused"},
-  {name: "Vacation", uid: "vacation"},
+  { name: "Active", uid: "active" },
+  { name: "Paused", uid: "paused" },
+  { name: "Vacation", uid: "vacation" },
 ];
 
 const users = [
@@ -251,10 +252,12 @@ export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 export default function Manageproducts() {
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
+  const [visibleColumns, setVisibleColumns] = React.useState(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
@@ -270,7 +273,9 @@ export default function Manageproducts() {
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return columns.filter((column) =>
+      Array.from(visibleColumns).includes(column.uid)
+    );
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
@@ -278,12 +283,15 @@ export default function Manageproducts() {
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+        user.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+    if (
+      statusFilter !== "all" &&
+      Array.from(statusFilter).length !== statusOptions.length
+    ) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
+        Array.from(statusFilter).includes(user.status)
       );
     }
 
@@ -314,7 +322,7 @@ export default function Manageproducts() {
       case "name":
         return (
           <User
-            avatarProps={{radius: "full", size: "sm", src: user.avatar}}
+            avatarProps={{ radius: "full", size: "sm", src: user.avatar }}
             classNames={{
               description: "text-default-500",
             }}
@@ -328,7 +336,9 @@ export default function Manageproducts() {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-500">{user.team}</p>
+            <p className="text-bold text-tiny capitalize text-default-500">
+              {user.team}
+            </p>
           </div>
         );
       case "status":
@@ -369,7 +379,6 @@ export default function Manageproducts() {
     setPage(1);
   }, []);
 
-
   const onSearchChange = React.useCallback((value) => {
     if (value) {
       setFilterValue(value);
@@ -404,6 +413,7 @@ export default function Manageproducts() {
                   endContent={<ChevronDown className="text-small" />}
                   size="sm"
                   variant="flat"
+                  className="bg-white ring-1 ring-[#146eb4] text-[#146eb4]"
                 >
                   Status
                 </Button>
@@ -429,6 +439,7 @@ export default function Manageproducts() {
                   endContent={<ChevronDown className="text-small" />}
                   size="sm"
                   variant="flat"
+                  className="bg-white ring-1 ring-[#146eb4] text-[#146eb4]"
                 >
                   Columns
                 </Button>
@@ -459,7 +470,9 @@ export default function Manageproducts() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
+          <span className="text-default-400 text-small">
+            Total {users.length} users
+          </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -486,7 +499,7 @@ export default function Manageproducts() {
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 px-2 flex justify-center items-center">
         <Pagination
           showControls
           classNames={{
@@ -499,11 +512,6 @@ export default function Manageproducts() {
           variant="light"
           onChange={setPage}
         />
-        <span className="text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${items.length} selected`}
-        </span>
       </div>
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
@@ -514,7 +522,8 @@ export default function Manageproducts() {
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
       td: [
         // changing the rows border radius
-       "border-b","p-2",
+        "border-b",
+        "p-2",
         "group-data-[first=true]:first:before:rounded-none",
         "group-data-[first=true]:last:before:rounded-none",
         // middle
@@ -524,49 +533,53 @@ export default function Manageproducts() {
         "group-data-[last=true]:last:before:rounded-none",
       ],
     }),
-    [],
+    []
   );
 
   return (
     <>
-    <Table
-    className="p-4"
-      isCompact
-      removeWrapper
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={classNames}
-      selectedKeys={selectedKeys}
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+      <Table
+        className="p-4"
+        isCompact
+        removeWrapper
+        aria-label="Example table with custom cells, pagination and sorting"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={classNames}
+        selectedKeys={selectedKeys}
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No users found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
 
-    <Modal 
-        backdrop="opaque" 
-        isOpen={isOpen} 
+      <Modal
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
+        backdrop="opaque"
+        isOpen={isOpen}
         onOpenChange={onOpenChange}
         motionProps={{
           variants: {
@@ -586,40 +599,13 @@ export default function Manageproducts() {
                 ease: "easeIn",
               },
             },
-          }
+          },
         }}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
-              <ModalBody>
-                <p> 
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit
-                  dolor adipisicing. Mollit dolor eiusmod sunt ex incididunt cillum quis. 
-                  Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor eiusmod. 
-                  Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur 
-                  proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </ModalFooter>
+              <Addproducts />
             </>
           )}
         </ModalContent>
@@ -627,4 +613,3 @@ export default function Manageproducts() {
     </>
   );
 }
-

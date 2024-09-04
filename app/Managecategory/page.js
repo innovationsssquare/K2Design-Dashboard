@@ -18,9 +18,8 @@ import {
   Pagination,
 } from "@nextui-org/react";
 import { Plus, Search, ChevronDown, EllipsisVertical } from "lucide-react";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/react";
+import {Modal, ModalContent, useDisclosure} from "@nextui-org/react";
 import Addcategory from "@/components/Managecategory/Addcategory";
-import {Accordion, AccordionItem} from "@nextui-org/react";
 
 const statusColorMap = {
   active: "success",
@@ -415,6 +414,7 @@ export default function Managecategory() {
                   endContent={<ChevronDown className="text-small" />}
                   size="sm"
                   variant="flat"
+                  className="bg-white ring-1 ring-[#146eb4] text-[#146eb4]"
                 >
                   Status
                 </Button>
@@ -439,6 +439,7 @@ export default function Managecategory() {
                 <Button
                   endContent={<ChevronDown className="text-small" />}
                   size="sm"
+                  className="bg-white ring-1 ring-[#146eb4] text-[#146eb4]"
                   variant="flat"
                 >
                   Columns
@@ -499,7 +500,7 @@ export default function Managecategory() {
 
   const bottomContent = React.useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 px-2 flex justify-center items-center">
         <Pagination
           showControls
           classNames={{
@@ -512,11 +513,7 @@ export default function Managecategory() {
           variant="light"
           onChange={setPage}
         />
-        <span className="text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${items.length} selected`}
-        </span>
+       
       </div>
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
