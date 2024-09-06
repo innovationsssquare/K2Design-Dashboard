@@ -185,9 +185,9 @@ const Addcategory = () => {
                 </Checkbox>
               </div>
               <div className="flex justify-end items-center w-full gap-4 ">
-                <Button className="text-[#146eb4] rounded-md ring-1 ring-[#146eb4]  bg-white">
+                {/* <Button  className="text-[#146eb4] rounded-md ring-1 ring-[#146eb4]  bg-white">
                   Cancel
-                </Button>
+                </Button> */}
                 <Button
                   className="bg-[#146eb4] w-44 rounded-md text-white"
                   onPress={handleSubmit}
