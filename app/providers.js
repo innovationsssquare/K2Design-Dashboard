@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import Nav from "@/components/Navbarcomponets/Nav";
 import Sidenav from "@/components/Navbarcomponets/Sidenav";
 
-export function Providers({ children }) {
+
+export function NextuiProviderWrapper({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -45,7 +46,7 @@ export function Providers({ children }) {
   }
 
   return (
-    <NextUIProvider>
+    <NextUIProvider >
      {pathname !== "/Signin" ? <main className="grid grid-cols-1 md:grid-cols-[auto,1fr] bg-[#f7f7f7]  w-full">
         {pathname !== "/Signin" && (
           <div className="w-full  h-full">
@@ -59,5 +60,6 @@ export function Providers({ children }) {
         </section>
       </main>:children}
     </NextUIProvider>
+
   );
 }

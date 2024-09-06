@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
+import { NextuiProviderWrapper } from "./providers";
+import { Providers } from "../lib/providers";
 import Nav from "@/components/Navbarcomponets/Nav";
 import Sidenav from "@/components/Navbarcomponets/Sidenav";
 import { Toaster } from "@/components/ui/sonner"
@@ -14,9 +15,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    <Providers>
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
+        <NextuiProviderWrapper>
           {/* <main className="grid grid-cols-1 md:grid-cols-[auto,1fr] bg-[#f7f7f7]  w-full">
             <div className="w-full  h-full">
               <Sidenav />
@@ -28,8 +30,10 @@ export default function RootLayout({ children }) {
             {/* </section>
           </main> */}
           <Toaster/>
-        </Providers>
+        </NextuiProviderWrapper>
       </body>
     </html>
+
+    </Providers>
   );
 }

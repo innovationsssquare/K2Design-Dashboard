@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Modal, ModalContent, Button } from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
 import { Calculator, Calendar, Smile } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 import {
   Command,
@@ -27,36 +28,48 @@ import {
   CreateSubcategoryapi,
   Uploaddocsubcategoryapi,
 } from "../../lib/API/Subcategory";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchcategories } from "../../lib/ReduxSlice/CategorySlice";
+import Image from "next/image";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Addcategory = () => {
+  const dispatch = useDispatch();
   const [isSelected, setIsSelected] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const inputRef = React.useRef(null);
   const [categoryName, setCategoryName] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState({
+    catid: "",
+    catname: "",
+  });
   const [image, setImage] = useState(null);
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({}); // For validation errors
+  const Categories = useSelector((state) => state.category.category);
+
+  useEffect(() => {
+    dispatch(fetchcategories());
+  }, [isModalOpen]);
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
 
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!categoryName) newErrors.categoryName = "Category name is required.";
-    if (!description) newErrors.description = "Description is required.";
-    if (isSelected && !selectedCategory)
-      newErrors.selectedCategory = "Please select a category.";
-    return newErrors;
+  const validate = () => {
+    if (!categoryName) return "Category Name is required";
+    if (!description) return "description is required";
+    if (!image) return "image is required";
+    if (isSelected && !selectedCategory) return "Please select a category.";
+    return null;
   };
 
   const handleSubmit = async () => {
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    const error = validate();
+
+    if (error) {
+      toast.error(error);
       return;
     }
 
@@ -68,13 +81,13 @@ const Addcategory = () => {
     const subdata = {
       name: categoryName,
       description: description,
-      categoryId: selectedCategory,
+      categoryId: selectedCategory.catid,
     };
 
     const formData = new FormData();
     if (image) formData.append("image", image);
 
-    setLoading(true); 
+    setLoading(true);
     try {
       if (isSelected) {
         const response = await CreateSubcategoryapi(subdata);
@@ -91,16 +104,21 @@ const Addcategory = () => {
       setDescription("");
       setImage(null);
       setIsSelected(false);
-      alert("Category or Subcategory created successfully!");
+      toast.success("Category  created successfully!");
     } catch (error) {
-      console.error("Error creating category or subcategory:", error);
+      toast.error("Error creating category ");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
   const handleInputClick = () => {
     setIsModalOpen(true);
+  };
+
+  const handleCategorySelection = (cat) => {
+    setSelectedCategory({ catid: cat._id, catname: cat.name });
+    setIsModalOpen(false);
   };
 
   return (
@@ -136,6 +154,7 @@ const Addcategory = () => {
                     ref={inputRef}
                     onClick={handleInputClick}
                     id="selectcategory"
+                    value={selectedCategory.catname || ""}
                     type="text"
                     className="w-full outline-none"
                   />
@@ -173,11 +192,13 @@ const Addcategory = () => {
                   className="bg-[#146eb4] w-44 rounded-md text-white"
                   onPress={handleSubmit}
                 >
-                 {loading
-                    ? <span className="loader"></span>
-                    : isSelected
-                    ? "Add Subcategory"
-                    : "Add Category"}
+                  {loading ? (
+                    <span className="loader"></span>
+                  ) : isSelected ? (
+                    "Add Subcategory"
+                  ) : (
+                    "Add Category"
+                  )}
                 </Button>
               </div>
             </div>
@@ -216,28 +237,69 @@ const Addcategory = () => {
             <>
               <Command className="rounded-none border shadow-md w-full">
                 <CommandInput placeholder="Search Category..." />
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup heading="Category">
-                    <CommandItem>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>Paper Printing</span>
-                    </CommandItem>
-                    <CommandItem>
-                      <Smile className="mr-2 h-4 w-4" />
-                      <span>Media Printing</span>
-                    </CommandItem>
-                    <CommandItem>
-                      <Calculator className="mr-2 h-4 w-4" />
-                      <span>Vinyl Letters</span>
-                    </CommandItem>
-                  </CommandGroup>
-                </CommandList>
+                {Categories.map((cat, index) => (
+                  <CommandList onClick={() => handleCategorySelection(cat)}>
+                    <CommandGroup>
+                      <CommandEmpty>No results found.</CommandEmpty>
+                      <CommandItem key={index}>
+                        <Image
+                          src={cat.image}
+                          width={10}
+                          height={10}
+                          alt="catimage"
+                          className="mr-2 h-4 w-4"
+                        />
+                        <span>{cat.name}</span>
+                      </CommandItem>
+                    </CommandGroup>
+                  </CommandList>
+                ))}
               </Command>
             </>
           )}
         </ModalContent>
       </Modal>
+
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Define default options
+          className: "",
+          duration: 5000,
+          style: {
+            background: "white",
+            color: "#000",
+          },
+
+          // Default options for specific types
+          success: {
+            className: "ring-1 ring-red-400 bg-[#fde7e9] ",
+            duration: 3000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+            style: {
+              background: "#e8f8e9",
+              color: "#000",
+              border: "1px solid green",
+            },
+          },
+          error: {
+            className: "ring-1 ring-red-400 bg-[#fde7e9]",
+            duration: 3000,
+            style: {
+              background: "#fde7e9",
+              color: "#000",
+              border: "1px solid red",
+            },
+          },
+        }}
+      />
     </>
   );
 };
