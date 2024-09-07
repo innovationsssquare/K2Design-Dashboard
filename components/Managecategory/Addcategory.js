@@ -238,10 +238,10 @@ const Addcategory = () => {
               <Command className="rounded-none border shadow-md w-full">
                 <CommandInput placeholder="Search Category..." />
                 {Categories.map((cat, index) => (
-                  <CommandList onClick={() => handleCategorySelection(cat)}>
+                  <CommandList onClick={() => handleCategorySelection(cat)} key={index}>
                     <CommandGroup>
                       <CommandEmpty>No results found.</CommandEmpty>
-                      <CommandItem key={index}>
+                      <CommandItem >
                         <Image
                           src={cat.image}
                           width={10}
