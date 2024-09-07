@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Modal, ModalContent, Button } from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
-import { Calculator, Calendar, Smile } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 import {
@@ -31,7 +30,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchcategories } from "../../lib/ReduxSlice/CategorySlice";
 import Image from "next/image";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Addcategory = () => {
   const dispatch = useDispatch();
@@ -46,12 +44,11 @@ const Addcategory = () => {
   });
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({}); // For validation errors
   const Categories = useSelector((state) => state.category.category);
 
   useEffect(() => {
     dispatch(fetchcategories());
-  }, [isModalOpen]);
+  }, [isSelected]);
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -93,13 +90,20 @@ const Addcategory = () => {
         const response = await CreateSubcategoryapi(subdata);
         if (response.status) {
           await Uploaddocsubcategoryapi(formData, response.data._id);
+        }else{
+          throw error
+          toast.error("Error creating category ");
         }
       } else {
         const response = await Createcategoryapi(data);
         if (response.status) {
           await Uploaddocapi(formData, response.data._id);
+        }else{
+          throw error
+          toast.error("Error creating category ");
         }
       }
+      dispatch(fetchcategories());
       setCategoryName("");
       setDescription("");
       setImage(null);
@@ -237,7 +241,7 @@ const Addcategory = () => {
             <>
               <Command className="rounded-none border shadow-md w-full">
                 <CommandInput placeholder="Search Category..." />
-                {Categories.map((cat, index) => (
+                {Categories?.map((cat, index) => (
                   <CommandList onClick={() => handleCategorySelection(cat)} key={index}>
                     <CommandGroup>
                       <CommandEmpty>No results found.</CommandEmpty>

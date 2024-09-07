@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -16,242 +16,34 @@ import {
   Chip,
   User,
   Pagination,
+  Tooltip,
+  Divider,
 } from "@nextui-org/react";
-import { Plus, Search, ChevronDown, EllipsisVertical } from "lucide-react";
+import { Plus, Search, ChevronDown, Eye,Pencil,Trash2 } from "lucide-react";
 import {Modal, ModalContent, useDisclosure} from "@nextui-org/react";
 import Addcategory from "@/components/Managecategory/Addcategory";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchcategories } from "../../lib/ReduxSlice/CategorySlice";
+import Image from "next/image";
 
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+
+const INITIAL_VISIBLE_COLUMNS = ["name", "subcategories", "Product", "actions"];
 const columns = [
-  { name: "ID", uid: "id", sortable: true },
-  { name: "NAME", uid: "name", sortable: true },
-  { name: "AGE", uid: "age", sortable: true },
-  { name: "ROLE", uid: "role", sortable: true },
-  { name: "TEAM", uid: "team" },
-  { name: "EMAIL", uid: "email" },
-  { name: "STATUS", uid: "status", sortable: true },
-  { name: "ACTIONS", uid: "actions" },
+  { name: "Categories", uid: "name", },
+  { name: "Subcategories", uid: "subcategories", },
+  { name: "Product count", uid: "Product" },
+  { name: "Actions", uid: "actions" },
 ];
 
-const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Paused", uid: "paused" },
-  { name: "Vacation", uid: "vacation" },
-];
 
-const users = [
-  {
-    id: 1,
-    name: "Tony Reichert",
-    role: "CEO",
-    team: "Management",
-    status: "active",
-    age: "29",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    email: "tony.reichert@example.com",
-  },
-  {
-    id: 2,
-    name: "Zoey Lang",
-    role: "Tech Lead",
-    team: "Development",
-    status: "paused",
-    age: "25",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-    email: "zoey.lang@example.com",
-  },
-  {
-    id: 3,
-    name: "Jane Fisher",
-    role: "Sr. Dev",
-    team: "Development",
-    status: "active",
-    age: "22",
-    avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-    email: "jane.fisher@example.com",
-  },
-  {
-    id: 4,
-    name: "William Howard",
-    role: "C.M.",
-    team: "Marketing",
-    status: "vacation",
-    age: "28",
-    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
-    email: "william.howard@example.com",
-  },
-  {
-    id: 5,
-    name: "Kristen Copper",
-    role: "S. Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-    email: "kristen.cooper@example.com",
-  },
-  {
-    id: 6,
-    name: "Brian Kim",
-    role: "P. Manager",
-    team: "Management",
-    age: "29",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    email: "brian.kim@example.com",
-    status: "active",
-  },
-  {
-    id: 7,
-    name: "Michael Hunt",
-    role: "Designer",
-    team: "Design",
-    status: "paused",
-    age: "27",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29027007d",
-    email: "michael.hunt@example.com",
-  },
-  {
-    id: 8,
-    name: "Samantha Brooks",
-    role: "HR Manager",
-    team: "HR",
-    status: "active",
-    age: "31",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e27027008d",
-    email: "samantha.brooks@example.com",
-  },
-  {
-    id: 9,
-    name: "Frank Harrison",
-    role: "F. Manager",
-    team: "Finance",
-    status: "vacation",
-    age: "33",
-    avatar: "https://i.pravatar.cc/150?img=4",
-    email: "frank.harrison@example.com",
-  },
-  {
-    id: 10,
-    name: "Emma Adams",
-    role: "Ops Manager",
-    team: "Operations",
-    status: "active",
-    age: "35",
-    avatar: "https://i.pravatar.cc/150?img=5",
-    email: "emma.adams@example.com",
-  },
-  {
-    id: 11,
-    name: "Brandon Stevens",
-    role: "Jr. Dev",
-    team: "Development",
-    status: "active",
-    age: "22",
-    avatar: "https://i.pravatar.cc/150?img=8",
-    email: "brandon.stevens@example.com",
-  },
-  {
-    id: 12,
-    name: "Megan Richards",
-    role: "P. Manager",
-    team: "Product",
-    status: "paused",
-    age: "28",
-    avatar: "https://i.pravatar.cc/150?img=10",
-    email: "megan.richards@example.com",
-  },
-  {
-    id: 13,
-    name: "Oliver Scott",
-    role: "S. Manager",
-    team: "Security",
-    status: "active",
-    age: "37",
-    avatar: "https://i.pravatar.cc/150?img=12",
-    email: "oliver.scott@example.com",
-  },
-  {
-    id: 14,
-    name: "Grace Allen",
-    role: "M. Specialist",
-    team: "Marketing",
-    status: "active",
-    age: "30",
-    avatar: "https://i.pravatar.cc/150?img=16",
-    email: "grace.allen@example.com",
-  },
-  {
-    id: 15,
-    name: "Noah Carter",
-    role: "IT Specialist",
-    team: "I. Technology",
-    status: "paused",
-    age: "31",
-    avatar: "https://i.pravatar.cc/150?img=15",
-    email: "noah.carter@example.com",
-  },
-  {
-    id: 16,
-    name: "Ava Perez",
-    role: "Manager",
-    team: "Sales",
-    status: "active",
-    age: "29",
-    avatar: "https://i.pravatar.cc/150?img=20",
-    email: "ava.perez@example.com",
-  },
-  {
-    id: 17,
-    name: "Liam Johnson",
-    role: "Data Analyst",
-    team: "Analysis",
-    status: "active",
-    age: "28",
-    avatar: "https://i.pravatar.cc/150?img=33",
-    email: "liam.johnson@example.com",
-  },
-  {
-    id: 18,
-    name: "Sophia Taylor",
-    role: "QA Analyst",
-    team: "Testing",
-    status: "active",
-    age: "27",
-    avatar: "https://i.pravatar.cc/150?img=29",
-    email: "sophia.taylor@example.com",
-  },
-  {
-    id: 19,
-    name: "Lucas Harris",
-    role: "Administrator",
-    team: "Information Technology",
-    status: "paused",
-    age: "32",
-    avatar: "https://i.pravatar.cc/150?img=50",
-    email: "lucas.harris@example.com",
-  },
-  {
-    id: 20,
-    name: "Mia Robinson",
-    role: "Coordinator",
-    team: "Operations",
-    status: "active",
-    age: "26",
-    avatar: "https://i.pravatar.cc/150?img=45",
-    email: "mia.robinson@example.com",
-  },
-];
+
 
 export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 export default function Managecategory() {
+  const dispatch = useDispatch();
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   const [filterValue, setFilterValue] = React.useState("");
@@ -267,7 +59,16 @@ export default function Managecategory() {
   });
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(users.length / rowsPerPage);
+  const Categories = useSelector((state) => state.category.category);
+  const status = useSelector((state) => state.category.status); 
+  const error = useSelector((state) => state.category.error);
+
+  useEffect(() => {
+  dispatch(fetchcategories())
+  }, [])
+  
+
+  const pages = Math.ceil(Categories?.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -280,24 +81,24 @@ export default function Managecategory() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = Array.isArray(Categories) ? [...Categories] : [];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredUsers = filteredUsers.filter((Category) =>
+        Category.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+      filteredUsers = filteredUsers.filter((Category) =>
+        Array.from(statusFilter).includes(Category.status)
       );
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [Categories, filterValue, statusFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -322,53 +123,59 @@ export default function Managecategory() {
     switch (columnKey) {
       case "name":
         return (
-          <User
-            avatarProps={{ radius: "full", size: "sm", src: user.avatar }}
-            classNames={{
-              description: "text-default-500",
-            }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+          <div className="flex justify-start items-center gap-2">
+            <div className="bg-slate-200 p-1 rounded-md">
+
+             <Image height={12} width={24} src={user?.image} className="h-12 w-28 object-fill rounded-sm" alt="imagecat"/>
+            </div>
+            <div className="flex flex-col justify-start items-start gap-1">
+              <p className="text-sm font-semibold">{cellValue}</p>
+              <p className="text-xs font-medium text-default-500">{user?.description}</p>
+            </div>
+          </div>
+       
         );
-      case "role":
+      case "subcategories":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-500">
-              {user.team}
+            <p className="text-bold  capitalize text-black ">
+              {user?.subcategories[0]?.name}
             </p>
           </div>
         );
-      case "status":
+      case "Product":
         return (
-          <Chip
-            className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[user.status]}
+          <div >
+
+         {user?.subcategories[0]?.products? <Chip
+            className="capitalize border-none gap-1 text-black"
+            color="primary"
             size="sm"
-            variant="dot"
+            variant="flat"
           >
-            {cellValue}
-          </Chip>
+            {user?.subcategories[0]?.products?.length}
+          </Chip>:"Product not added"}
+          </div>
         );
       case "actions":
         return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown className="bg-background border-1 border-default-200">
-              <DropdownTrigger>
-                <Button isIconOnly radius="full" size="sm" variant="light">
-                  <EllipsisVertical className="text-default-400" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+          <div className=" flex justify-center items-center gap-4">
+          <Tooltip content="Details">
+            <span className="text-xs text-default-400 cursor-pointer active:opacity-50">
+              <Eye size={15} />
+            </span>
+          </Tooltip>
+          <Tooltip content="Edit">
+            <span  className="text-xs text-[#205093] cursor-pointer active:opacity-50">
+              <Pencil size={15}/>
+            </span>
+          </Tooltip>
+          <Tooltip color="danger" content="Delete">
+            <span className="text-xs text-red-500 cursor-pointer active:opacity-50">
+              <Trash2 size={15}/>
+            </span>
+          </Tooltip>
+        </div>
         );
       default:
         return cellValue;
@@ -397,7 +204,7 @@ export default function Managecategory() {
             isClearable
             classNames={{
               base: "w-full sm:max-w-[44%]",
-              inputWrapper: "border-1 ",
+              inputWrapper: "border-1 focus:border-[#146eb4] ",
             }}
             placeholder="Search by name..."
             size="sm"
@@ -408,58 +215,6 @@ export default function Managecategory() {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex ">
-                <Button
-                  endContent={<ChevronDown className="text-small" />}
-                  size="sm"
-                  variant="flat"
-                  className="bg-white ring-1 ring-[#146eb4] text-[#146eb4]"
-                >
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDown className="text-small" />}
-                  size="sm"
-                  className="bg-white ring-1 ring-[#146eb4] text-[#146eb4]"
-                  variant="flat"
-                >
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
             <Button
             onPress={onOpen}
               className="bg-[#146eb4] text-background"
@@ -470,9 +225,10 @@ export default function Managecategory() {
             </Button>
           </div>
         </div>
+        <Divider className="bg-gray-200"/>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total {Categories?.length} Categories
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -494,7 +250,7 @@ export default function Managecategory() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    Categories?.length,
     hasSearchFilter,
   ]);
 
@@ -521,7 +277,7 @@ export default function Managecategory() {
   const classNames = React.useMemo(
     () => ({
       wrapper: ["max-h-screen", "w-full", "bg-transparent", "rounded-md"],
-      th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
+      th: ["bg-[#146eb4]", "text-white", "border-b", "border-divider"],
       td: [
         // changing the rows border radius
         "border-b",
@@ -540,6 +296,11 @@ export default function Managecategory() {
 
   return (
     <>
+     {status=== "loading" ? (
+        <div className="w-full h-full col-span-3 flex justify-center items-center">
+          <span className="loader2"></span>
+        </div>
+      ) : (
       <Table
         className="p-4"
         removeWrapper
@@ -566,9 +327,9 @@ export default function Managecategory() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No users found"} items={sortedItems}>
+        <TableBody emptyContent={"No categories found"} items={sortedItems}>
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item._id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
@@ -576,9 +337,9 @@ export default function Managecategory() {
           )}
         </TableBody>
       </Table>
-
+     )}
       <Modal
-        backdrop="opaque"
+        backdrop="blur"
   isDismissable={false} isKeyboardDismissDisabled={true}
         isOpen={isOpen}
         size="2xl"

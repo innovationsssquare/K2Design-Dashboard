@@ -519,7 +519,7 @@ export default function Manageproducts() {
   const classNames = React.useMemo(
     () => ({
       wrapper: ["max-h-screen", "w-full"],
-      th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
+      th: ["bg-[#146eb4]", "text-white", "border-b", "border-divider"],
       td: [
         // changing the rows border radius
         "border-b",
