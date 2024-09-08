@@ -95,7 +95,7 @@ const Sidenav = () => {
 
   return (
     <aside
-      className={`sticky top-0 left-0 z-10 h-screen flex flex-col items-center bg-[#1b181e] transition-all duration-700 ease-in-out ${
+      className={`sticky top-0 left-0 z-10 h-screen hidden md:flex lg:flex flex-col items-center bg-[#1b181e] transition-all duration-700 ease-in-out ${
         isMinimized ? "w-20" : "w-60"
       }`}
     >
@@ -339,7 +339,7 @@ const Sidenav = () => {
             : "mt-auto flex w-20 justify-start items-start gap-4 px-2 sm:py-5 transition-all duration-700 ease-in-out"
         }
       >
-        <Button className="flex items-center w-full justify-start bg-transparent gap-4 text-white font-semibold transition-all duration-700 ease-in-out">
+        <Button className="flex items-center w-full justify-start bg-transparent gap-4 text-white font-semibold ">
           {!isMinimized ? (
             <LogOut size={20} />
           ) : (
@@ -355,7 +355,7 @@ const Sidenav = () => {
               <LogOut size={20} />
             </Tooltip>
           )}
-          {!isMinimized && <span>Logout</span>}
+          {!isMinimized && <span className="text-sm">Logout</span>}
         </Button>
       </nav>
     </aside>
