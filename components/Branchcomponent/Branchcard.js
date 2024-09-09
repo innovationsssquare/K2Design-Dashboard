@@ -17,6 +17,7 @@ import {
 } from "@nextui-org/react";
 import { Getbranchdetailsbyid } from "@/lib/API/Branch";
 import toast, { Toaster } from "react-hot-toast";
+import {Building} from "lucide-react"
 
 
 const Branchcard = ({data}) => {
