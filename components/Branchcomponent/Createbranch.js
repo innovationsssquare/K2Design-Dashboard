@@ -18,9 +18,9 @@ const Createbranch = () => {
     dispatch(Setopenbranch(!openbranch)); 
   };
   const [formData, setFormData] = useState({
-    Branchname: "",
-    Address: "",
-    Number: "",
+    branchName: "",
+    location: "",
+    contactNumber: "",
     code: "",
   });
 
@@ -30,14 +30,13 @@ const Createbranch = () => {
   };
 
   const validate = () => {
-    if (!formData.Branchname) return "Branch Name is required";
-    if (!formData.Address) return "Address is required";
-    if (!formData.Number) {
+    if (!formData.branchName) return "Branch Name is required";
+    if (!formData.location) return "Address is required";
+    if (!formData.contactNumber) {
       return "Phone Number is required";
-    } else if (!/^\d{10}$/.test(formData.Number)) {
+    } else if (!/^\d{10}$/.test(formData.contactNumber)) {
       return "Phone Number must be 10 digits";
     }
-    if (!formData.Address) return "Address is required";
     if (!formData.code) return "code is required";
     return null;
   };
@@ -86,7 +85,7 @@ const Createbranch = () => {
             className="w-full rounded-none"
             size="lg"
             placeholder="Branch Name"
-            value={formData.Branchname}
+            value={formData.branchName}
             onChange={handleChange}
           />
           <Input
@@ -97,7 +96,7 @@ const Createbranch = () => {
             className="w-full rounded-none"
             size="lg"
             placeholder="Location"
-            value={formData.Address}
+            value={formData.location}
             onChange={handleChange}
           />
           <Input
@@ -108,7 +107,7 @@ const Createbranch = () => {
             className="w-full rounded-none"
             size="lg"
             placeholder="Phone Number"
-            value={formData.Number}
+            value={formData.contactNumber}
             onChange={handleChange}
           />
           <Input

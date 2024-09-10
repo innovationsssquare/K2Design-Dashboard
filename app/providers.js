@@ -14,7 +14,7 @@ export function NextuiProviderWrapper({ children }) {
 
   useEffect(() => {
     const token = Cookies.get("token");
-    if (!token) {
+    if (token) {
       setIsAuthenticated(true);
       if (pathname === "/Signin") {
         router.push("/");

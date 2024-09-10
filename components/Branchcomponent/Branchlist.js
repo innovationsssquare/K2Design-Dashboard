@@ -34,15 +34,13 @@ const Branchlist = () => {
   }, [dispatch]);
 
 
-  useEffect(() => {
-    dispatch(fetchBranches());
-  }, [dispatch]);
+ 
 
   useEffect(() => {
     setFilteredBranches(
       branches?.filter((branch) =>
-        typeof branch.Branchname === "string" &&
-        branch.Branchname.toLowerCase().includes(filterQuery.toLowerCase())
+        typeof branch.branchName === "string" &&
+        branch.branchName.toLowerCase().includes(filterQuery.toLowerCase())
       )
     );
   }, [branches, filterQuery]);
@@ -51,9 +49,7 @@ const Branchlist = () => {
     dispatch(Setopenbranch(!openbranch)); 
   };
 
-  const handleRefresh = () => {
-    dispatch(fetchBranches());
-  };
+
 
 
   if(filteredBranches === undefined) {
@@ -61,6 +57,7 @@ const Branchlist = () => {
       <p>Error while fetching branch details</p>
     </div>
   }
+console.log(filteredBranches)
   return (
     <>
       {status === "loading" ? (
@@ -69,7 +66,7 @@ const Branchlist = () => {
         </p>
       ) : (
         <div className="w-full grid grid-cols-2 justify-center items-center place-content-center mx-auto gap-6">
-          {status === "succeeded" && filteredBranches?.length === 0 && (
+          {status==="succeeded" && filteredBranches?.length === 0 && (
             <div className="w-full boxshadow h-40 flex justify-center items-center p-3 rounded-md">
               <p>No branches Found</p>
             </div>
@@ -82,9 +79,9 @@ const Branchlist = () => {
           {status === "succeeded" && (
             <Button
               onPress={setopenmodel}
-              className="w-full  h-40 flex justify-center ring-2 ring-[#205093] bg-[#B9D6FF59]  items-center p-3 rounded-md"
+              className="w-full  h-40 flex justify-center ring-2 ring-[#146eb4] bg-[#B9D6FF59]  items-center p-3 rounded-md"
             >
-              <FaCirclePlus size={40} className="text-[#205093]" />
+              <FaCirclePlus size={40} className="text-[#146eb4]" />
             </Button>
           )}
         </div>

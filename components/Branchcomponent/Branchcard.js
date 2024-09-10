@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Button, Skeleton } from "@nextui-org/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -17,93 +17,93 @@ import {
 } from "@nextui-org/react";
 import { Getbranchdetailsbyid } from "@/lib/API/Branch";
 import toast, { Toaster } from "react-hot-toast";
-import {Building} from "lucide-react"
+import { Building } from "lucide-react";
 
-
-const Branchcard = ({data}) => {
+const Branchcard = ({ data }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-const [Branchid,Setbranchid]=useState()
-const [loadingDetails, setLoadingDetails] = useState(false);
-const [branchDetails, setBranchDetails] = useState(null);
+  const [Branchid, Setbranchid] = useState();
+  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [branchDetails, setBranchDetails] = useState(null);
 
-
-useEffect(() => {
-  const fetchDetails = async () => {
-    if (data?._id) {
-      setLoadingDetails(true);
-      try {
-        const result = await Getbranchdetailsbyid(data._id);
-        if (result.status) {
-          setBranchDetails(result.data);
+  useEffect(() => {
+    const fetchDetails = async () => {
+      if (data?._id) {
+        setLoadingDetails(true);
+        try {
+          const result = await Getbranchdetailsbyid(data._id);
+          if (result.status) {
+            setBranchDetails(result.data);
+            setLoadingDetails(false);
+          } else {
+            toast.error(result.message || "Failed to fetch branch details");
+            setLoadingDetails(false);
+          }
+        } catch (error) {
+          toast.error("An error occurred while fetching branch details");
           setLoadingDetails(false);
-
-        } else {
-          toast.error(result.message || "Failed to fetch branch details");
+        } finally {
           setLoadingDetails(false);
-
         }
-      } catch (error) {
-        toast.error("An error occurred while fetching branch details");
-        setLoadingDetails(false);
-      } finally {
-        setLoadingDetails(false);
       }
-    }
+    };
+
+    fetchDetails();
+  }, [data._id]);
+
+  const handleopen = (id) => {
+    onOpenChange();
+    Setbranchid(id);
   };
-
-  fetchDetails();
-}, [data._id]);
-
-
-
-
-
-  const handleopen=(id)=>{
-    onOpenChange()
-    Setbranchid(id)
-  }
-
-
-
 
   return (
     <>
-    <div className="w-full boxshadow h-40 flex justify-between items-center p-3 rounded-md">
-      <div className="h-full justify-between items-start flex flex-col">
-        <div className="flex justify-start gap-2 items-start">
-          <Building/>
-          <div className="flex flex-col justify-start items-start ">
-            <p className="font-bold text-lg capitalize">{data.Branchname}</p>
-            <p className="flex items-center justify-start gap-2 text-xs text-gray-500"><FaLocationDot/>{data.Address}</p>
+      <div className="w-full boxshadow h-40 flex justify-between items-center p-3 rounded-md">
+        <div className="h-full justify-between items-start flex flex-col">
+          <div className="flex justify-start gap-2 items-start">
+            <Building size={40} className="text-[#146eb4]" />
+            <div className="flex flex-col justify-start items-start ">
+              <p className="font-bold text-lg capitalize">{data.branchName}</p>
+              <p className="flex items-center justify-start gap-2 text-xs text-gray-500">
+                <FaLocationDot />
+                {data.location}
+              </p>
+            </div>
+          </div>
+          {loadingDetails ? (
+            <div className="flex justify-start items-center w-full gap-4 ">
+              <Skeleton className="h-4 w-16 rounded-sm"></Skeleton>
+              <Skeleton className="h-4 w-16 rounded-sm"></Skeleton>
+            </div>
+          ) : (
+            <div className="flex justify-start items-center w-full gap-4 ">
+              <div className="bg-[#E8EAF1] flex items-center gap-2 justify-center p-1 rounded-md">
+                <p className="flex items-center text-xs font-semibold gap-2">
+                  <IoPeople className="text-[#146eb4]" />
+                  {branchDetails?.admins}&nbsp;Admins
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="h-full justify-between items-start flex flex-col">
+          <div className="flex justify-start items-center ">
+            <p className="flex items-center text-xs font-semibold gap-2 text-[#205093]">
+              <FaPhoneAlt />
+              +91-{data?.contactNumber}
+            </p>
+          </div>
+          <div>
+            <Button
+              onPress={() => handleopen(data._id)}
+              className="bg-white ring-1 h-8 ring-[#146eb4] text-[#146eb4] text-sm font-bold rounded-sm"
+            >
+              Edit Details
+            </Button>
           </div>
         </div>
-{loadingDetails?
-        <div className="flex justify-start items-center w-full gap-4 ">
-          <Skeleton className="h-4 w-16 rounded-sm"></Skeleton>
-          <Skeleton className="h-4 w-16 rounded-sm"></Skeleton>
-        </div>:
-        <div className="flex justify-start items-center w-full gap-4 ">
-          <div className="bg-[#E8EAF1] flex items-center gap-2 justify-center p-1 rounded-md">
-            <p className="flex items-center text-xs font-semibold gap-2"><IoPeople/>{branchDetails?.admins}&nbsp;Admins</p>
-          </div>
-          <div className="bg-[#E8EAF1] flex items-center gap-2 justify-center p-1 rounded-md">
-            <p className="flex items-center text-xs font-semibold gap-2"><FaBed/>{branchDetails?.user}&nbsp;Tenants</p>
-          </div>
-        </div>
-        
-        }
       </div>
-      <div className="h-full justify-between items-start flex flex-col">
-        <div className="flex justify-start items-center ">
-          <p  className="flex items-center text-xs font-semibold gap-2 text-[#205093]"><FaPhoneAlt/>+91-{data.Number}</p>
-        </div>
-        <div>
-          <Button onPress={()=>handleopen(data._id)} className="bg-white ring-1 h-8 ring-[#025EFF] text-[#025EFF] text-sm font-bold rounded-sm">Edit Details</Button>
-        </div>
-      </div>
-    </div>
 
-    <Modal
+      <Modal
         isDismissable={false}
         isKeyboardDismissDisabled={true}
         backdrop="blur"
@@ -135,17 +135,16 @@ useEffect(() => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col text-center">
-                Edit Branch Details 
+                Edit Branch Details
               </ModalHeader>
               <ModalBody>
-               <Updatebranch id={Branchid}/>
+                <Updatebranch id={Branchid} />
               </ModalBody>
               <ModalFooter className="flex justify-center items-center text-center"></ModalFooter>
             </>
           )}
         </ModalContent>
       </Modal>
-
 
       {/* <Toaster
         position="top-center"
@@ -172,7 +171,6 @@ useEffect(() => {
           },
         }}
       /> */}
-
     </>
   );
 };

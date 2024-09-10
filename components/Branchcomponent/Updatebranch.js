@@ -12,6 +12,12 @@ const Updatebranch = ({id}) => {
   const [loadingData, setLoadingData] = useState(true);
 
   const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
+  const [formData, setFormData] = useState({
+    branchName: "",
+    location: "",
+    contactNumber: "",
+    code: "",
+  });
 
 
   useEffect(() => {
@@ -27,9 +33,9 @@ const Updatebranch = ({id}) => {
         const result = await Getbranchbyid(id);
         if (result.status) {
           setFormData({
-            Branchname: result.data.Branchname,
-            Address: result.data.Address,
-            Number: result.data.Number,
+            branchName: result.data.branchName,
+            location: result.data.location,
+            contactNumber: result.data.contactNumber,
             code: result.data.code,
           });
         } else {
@@ -47,13 +53,7 @@ const Updatebranch = ({id}) => {
     }
   }, [id]);
 
-  const [formData, setFormData] = useState({
-    Branchname: "",
-    Address: "",
-    Number: "",
-    code: "",
-  });
-
+ 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,14 +62,13 @@ const Updatebranch = ({id}) => {
 
 
   const validate = () => {
-    if (!formData.Branchname) return "Branch Name is required";
-    if (!formData.Address) return "Address is required";
-    if (!formData.Number) {
+    if (!formData.branchName) return "Branch Name is required";
+    if (!formData.location) return "Address is required";
+    if (!formData.contactNumber) {
       return "Phone Number is required";
-    } else if (!/^\d{10}$/.test(formData.Number)) {
+    } else if (!/^\d{10}$/.test(formData.contactNumber)) {
       return "Phone Number must be 10 digits";
     }
-    if (!formData.Address) return "Address is required";
     if (!formData.code) return "code is required";
     return null;
   };
@@ -110,35 +109,35 @@ const Updatebranch = ({id}) => {
       >
         <Input
           type="text"
-          name="Branchname"
+          name="branchName"
           variant="bordered"
           radius="sm"
           className="w-full rounded-none"
           size="lg"
           placeholder="Branch Name"
-          value={formData.Branchname}
+          value={formData.branchName}
           onChange={handleChange}
         />
         <Input
           type="text"
-          name="Address"
+          name="location"
           variant="bordered"
           radius="sm"
           className="w-full rounded-none"
           size="lg"
           placeholder="Location"
-          value={formData.Address}
+          value={formData.location}
           onChange={handleChange}
         />
         <Input
           type="text"
-          name="Number"
+          name="contactNumber"
           variant="bordered"
           radius="sm"
           className="w-full rounded-none"
           size="lg"
           placeholder="Phone Number"
-          value={formData.Number}
+          value={formData.contactNumber}
           onChange={handleChange}
         />
         <Input
@@ -155,8 +154,8 @@ const Updatebranch = ({id}) => {
       
       </div>
         <div className="flex justify-center items-center w-full">
-        <Button onPress={handleSubmit} className="buttongradient text-white rounded-md w-60 uppercase font-semibold">
-        {loading ? <span className="loader2"></span> : "Update Branch"}
+        <Button onPress={handleSubmit} className="bg-[#146eb4] text-white rounded-md w-60 uppercase font-semibold">
+        {loading ? <span className="loader"></span> : "Update Branch"}
         </Button>
 
         </div>
@@ -172,18 +171,33 @@ const Updatebranch = ({id}) => {
         toastOptions={{
           // Define default options
           className: "",
-          duration: 1000,
+          duration: 5000,
           style: {
-            background: "linear-gradient(90deg, #222C68 0%, #1D5B9E 100%)",
-            color: "#fff",
+            background: "white",
+            color: "#000",
           },
 
           // Default options for specific types
           success: {
-            duration: 1000,
+            className: "ring-1 ring-red-400 bg-[#fde7e9] ",
+            duration: 3000,
             theme: {
               primary: "green",
               secondary: "black",
+            },
+            style: {
+              background: "#e8f8e9",
+              color: "#000",
+              border: "1px solid green",
+            },
+          },
+          error: {
+            className: "ring-1 ring-red-400 bg-[#fde7e9]",
+            duration: 3000,
+            style: {
+              background: "#fde7e9",
+              color: "#000",
+              border: "1px solid red",
             },
           },
         }}
