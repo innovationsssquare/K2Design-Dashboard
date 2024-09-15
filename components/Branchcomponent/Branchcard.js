@@ -6,6 +6,7 @@ import { FaPhoneAlt } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { IoPeople } from "react-icons/io5";
 import { FaLocationDot } from "react-icons/fa6";
+import { Trash2,UserRoundPlus } from "lucide-react";
 import Updatebranch from "./Updatebranch";
 import {
   Modal,
@@ -18,12 +19,24 @@ import {
 import { Getbranchdetailsbyid } from "@/lib/API/Branch";
 import toast, { Toaster } from "react-hot-toast";
 import { Building } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Addadmin from "./Addadmin";
 
 const Branchcard = ({ data }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [Branchid, Setbranchid] = useState();
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [branchDetails, setBranchDetails] = useState(null);
+  const [openmodel,Setopenmodal]=useState(false)
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -72,7 +85,6 @@ const Branchcard = ({ data }) => {
           {loadingDetails ? (
             <div className="flex justify-start items-center w-full gap-4 ">
               <Skeleton className="h-4 w-16 rounded-sm"></Skeleton>
-              <Skeleton className="h-4 w-16 rounded-sm"></Skeleton>
             </div>
           ) : (
             <div className="flex justify-start items-center w-full gap-4 ">
@@ -82,8 +94,18 @@ const Branchcard = ({ data }) => {
                   {branchDetails?.admins}&nbsp;Admins
                 </p>
               </div>
+              <div>
+              <Button
+              onPress={()=>Setopenmodal(true)}
+              size="sm"
+              className="text-white  h-6   bg-[#146eb4] text-sm rounded-md font-bold rounded-sm"
+            >
+             <UserRoundPlus size={15}/>
+            </Button>
+              </div>
             </div>
           )}
+
         </div>
         <div className="h-full justify-between items-start flex flex-col">
           <div className="flex justify-start items-center ">
@@ -92,16 +114,48 @@ const Branchcard = ({ data }) => {
               +91-{data?.contactNumber}
             </p>
           </div>
-          <div>
+          <div className="flex items-center gap-2">
             <Button
               onPress={() => handleopen(data._id)}
               className="bg-white ring-1 h-8 ring-[#146eb4] text-[#146eb4] text-sm font-bold rounded-sm"
             >
               Edit Details
             </Button>
+
+            <Dialog>
+              <DialogTrigger>
+                <div
+                  // onPress={() => handleopen(data._id)}
+                  className="bg-transparent text-red-500   h-8  text-sm font-bold rounded-sm"
+                >
+                  <Trash2 />
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Are you absolutely sure?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your Branch account and remove your data from our servers.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="sm:justify-end">
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      className="text-white  h-8  bg-red-500 text-sm font-bold rounded-sm"
+                      variant="secondary"
+                    >
+                     Delete
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
+
 
       <Modal
         isDismissable={false}
@@ -145,32 +199,50 @@ const Branchcard = ({ data }) => {
           )}
         </ModalContent>
       </Modal>
-
-      {/* <Toaster
-        position="top-center"
-        reverseOrder={false}
-        gutter={8}
-        containerClassName=""
-        containerStyle={{}}
-        toastOptions={{
-          // Define default options
-          className: "",
-          duration: 1000,
-          style: {
-            background: "linear-gradient(90deg, #222C68 0%, #1D5B9E 100%)",
-            color: "#fff",
-          },
-
-          // Default options for specific types
-          success: {
-            duration: 1000,
-            theme: {
-              primary: "green",
-              secondary: "black",
+      <Modal
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
+        backdrop="blur"
+        size="4xl"
+        isOpen={openmodel}
+        onOpenChange={Setopenmodal}
+        motionProps={{
+          variants: {
+            enter: {
+              y: 0,
+              opacity: 1,
+              transition: {
+                duration: 0.3,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              y: -20,
+              opacity: 0,
+              transition: {
+                duration: 0.2,
+                ease: "easeIn",
+              },
             },
           },
         }}
-      /> */}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col text-center">
+               Add Admin
+              </ModalHeader>
+              <ModalBody>
+                <Addadmin id={Branchid} />
+              </ModalBody>
+              <ModalFooter className="flex justify-center items-center text-center"></ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      
     </>
   );
 };

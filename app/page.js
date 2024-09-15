@@ -30,12 +30,19 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Areacard from "@/components/Dashboardcomponet/Areacard";
 
 export function Dashboard() {
+
+
   return (
     <main className="flex-1 px-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+         <Areacard/>
+         <Areacard/>
+         <Areacard/>
+         <Areacard/>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
             <BookAudio className="h-4 w-4 text-muted-foreground" />
@@ -82,7 +89,7 @@ export function Dashboard() {
               +19% from last month
             </p>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
       <div className="grid gap-4 py-4 md:gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">

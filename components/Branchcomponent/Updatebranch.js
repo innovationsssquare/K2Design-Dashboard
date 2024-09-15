@@ -86,7 +86,11 @@ const Updatebranch = ({id}) => {
 
     const result = await Upadtebranchapi(formData,id);
     if (result.status) {
-    dispatch(fetchBranches());
+      toast.success("Branch Updated successfully");
+      setTimeout(() => {
+        
+        dispatch(fetchBranches());
+      }, 2000);
     setLoading(false)
     } else {
 
@@ -98,7 +102,7 @@ const Updatebranch = ({id}) => {
   return (
     <>
    {loadingData ?<div className="w-full flex justify-center items-center h-72">
-    <span className="loader3"></span>
+    <span className="loader2"></span>
    </div>: <div className="flex flex-col justify-center items-center gap-6">
       <div className="w-full text-start">
         <p className="text-lg font-semibold">Fill Branch Details</p>

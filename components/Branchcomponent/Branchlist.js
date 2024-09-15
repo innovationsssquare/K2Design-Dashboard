@@ -62,7 +62,7 @@ console.log(filteredBranches)
     <>
       {status === "loading" ? (
         <p className="flex justify-start items-center flex-col gap-2 h-[40vh] w-full mt-24">
-          <span className="loader3 "></span>
+          <span className="loader2"></span>
         </p>
       ) : (
         <div className="w-full grid grid-cols-2 justify-center items-center place-content-center mx-auto gap-6">
@@ -76,14 +76,14 @@ console.log(filteredBranches)
               status === "succeeded" && <Branchcard data={data} key={index} />
           )}
 
-          {status === "succeeded" && (
+          {/* {status === "succeeded" && (
             <Button
               onPress={setopenmodel}
               className="w-full  h-40 flex justify-center ring-2 ring-[#146eb4] bg-[#B9D6FF59]  items-center p-3 rounded-md"
             >
               <FaCirclePlus size={40} className="text-[#146eb4]" />
             </Button>
-          )}
+          )} */}
         </div>
       )}
 

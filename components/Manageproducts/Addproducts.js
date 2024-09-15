@@ -121,7 +121,7 @@ const Addproducts = () => {
                 {/* Product Name */}
                 <div className="grid gap-3">
                   <Label htmlFor="productName">Product Name</Label>
-                  <Input id="productName" placeholder="Enter product name" />
+                  <Input  id="productName" placeholder="Enter product name" />
                 </div>
 
                 {/* Price */}

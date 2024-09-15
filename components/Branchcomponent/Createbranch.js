@@ -62,8 +62,11 @@ const Createbranch = () => {
     if (result.status) {
       toast.success("Branch created successfully");
       dispatch(fetchBranches());
-      setopenmodel()
       setLoading(false);
+      setTimeout(() => {
+        setopenmodel()
+        
+      }, 2000);
     } else {
       toast.error(result.message.result || "Failed to create branch");
       setLoading(false);
@@ -79,7 +82,7 @@ const Createbranch = () => {
         <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-6 place-content-center justify-between items-start">
           <Input
             type="text"
-            name="Branchname"
+            name="branchName"
             variant="bordered"
             radius="sm"
             className="w-full rounded-none"
@@ -90,7 +93,7 @@ const Createbranch = () => {
           />
           <Input
             type="text"
-            name="Address"
+            name="location"
             variant="bordered"
             radius="sm"
             className="w-full rounded-none"
@@ -101,7 +104,7 @@ const Createbranch = () => {
           />
           <Input
             type="tel"
-            name="Number"
+            name="contactNumber"
             variant="bordered"
             radius="sm"
             className="w-full rounded-none"
