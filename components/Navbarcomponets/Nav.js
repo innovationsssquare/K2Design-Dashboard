@@ -126,6 +126,7 @@ export default function Nav() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="sm:max-w-xs">
+            <SheetHeader>Notifications</SheetHeader>
               
             </SheetContent>
           </Sheet>
