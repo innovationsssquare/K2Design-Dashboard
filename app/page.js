@@ -91,8 +91,8 @@ export function Dashboard() {
           </CardContent>
         </Card> */}
       </div>
-      <div className="grid gap-4 py-4 md:gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
+      <div className="grid gap-4 py-4 md:gap-4 lg:grid-cols-2 ">
+        <Card className="" x-chunk="dashboard-01-chunk-4">
           <CardHeader className="flex flex-row items-center">
             <div className="grid gap-2">
               <CardTitle>Transactions</CardTitle>
