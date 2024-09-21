@@ -16,7 +16,6 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import { Getbranchdetailsbyid } from "@/lib/API/Branch";
 import toast, { Toaster } from "react-hot-toast";
 import { Building } from "lucide-react";
 import {
@@ -30,44 +29,38 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Addadmin from "./Addadmin";
+import { useSelector, useDispatch } from "react-redux";
+import {Setopenadmin,fetchAdmins} from "@/lib/ReduxSlice/Adminslice";
+import {setSelectedBranch} from "@/lib/ReduxSlice/BranchSlice"
+import {Getadminbybranch} from "@/lib/API/Auth"
 
 const Branchcard = ({ data }) => {
+  const dispatch = useDispatch();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [Branchid, Setbranchid] = useState();
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [branchDetails, setBranchDetails] = useState(null);
   const [openmodel,Setopenmodal]=useState(false)
+  const openadmin = useSelector(
+    (state) => state.admins.openadmin
+  );
+  const admins =useSelector((state)=>state.admins.admins)
+
+  const setopenmodeladmin = (data) => {
+    dispatch(Setopenadmin(!openadmin)); 
+    dispatch(setSelectedBranch(data._id))
+  };
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      if (data?._id) {
-        setLoadingDetails(true);
-        try {
-          const result = await Getbranchdetailsbyid(data._id);
-          if (result.status) {
-            setBranchDetails(result.data);
-            setLoadingDetails(false);
-          } else {
-            toast.error(result.message || "Failed to fetch branch details");
-            setLoadingDetails(false);
-          }
-        } catch (error) {
-          toast.error("An error occurred while fetching branch details");
-          setLoadingDetails(false);
-        } finally {
-          setLoadingDetails(false);
-        }
-      }
-    };
-
-    fetchDetails();
-  }, [data._id]);
+    dispatch(fetchAdmins(data._id));
+  }, []);
 
   const handleopen = (id) => {
     onOpenChange();
     Setbranchid(id);
   };
 
+console.log(admins)
   return (
     <>
       <div className="w-full boxshadow h-40 flex justify-between items-center p-3 rounded-md">
@@ -96,9 +89,9 @@ const Branchcard = ({ data }) => {
               </div>
               <div>
               <Button
-              onPress={()=>Setopenmodal(true)}
+              onPress={()=>setopenmodeladmin(data)}
               size="sm"
-              className="text-white  h-6   bg-[#146eb4] text-sm rounded-md font-bold rounded-sm"
+              className="text-white  h-6   bg-[#146eb4] text-sm rounded-md font-bold "
             >
              <UserRoundPlus size={15}/>
             </Button>
@@ -202,10 +195,10 @@ const Branchcard = ({ data }) => {
       <Modal
         isDismissable={false}
         isKeyboardDismissDisabled={true}
-        backdrop="blur"
+        backdrop="opaque"
         size="4xl"
-        isOpen={openmodel}
-        onOpenChange={Setopenmodal}
+        isOpen={openadmin}
+        onOpenChange={setopenmodeladmin}
         motionProps={{
           variants: {
             enter: {

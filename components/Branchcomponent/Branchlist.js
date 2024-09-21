@@ -31,7 +31,7 @@ const Branchlist = () => {
 
   useEffect(() => {
     dispatch(fetchBranches());
-  }, [dispatch]);
+  }, []);
 
 
  

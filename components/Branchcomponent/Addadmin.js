@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, Input } from "@nextui-org/react";
-// import { Createadminapi } from "@/lib/API/Admin";
+import { Button } from "@nextui-org/react";
+import { Createadmin } from "@/lib/API/Auth";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchBranches } from "@/lib/ReduxSlice/BranchSlice";
-// import { fetchAdmins } from "@/lib/AdminSlice";
-import {Setopenadmin} from "@/lib/ReduxSlice/BranchSlice";
+import { fetchAdmins } from "@/lib/ReduxSlice/Adminslice";
+import {Setopenadmin} from "@/lib/ReduxSlice/Adminslice";
+import { Input } from "../ui/input";
 
 
 
@@ -16,56 +17,46 @@ const Addadmin = () => {
   const [loading, setLoading] = useState(false);
   const selectedBranchId = useSelector((state) => state.branches.selectedBranchId); 
   const openadmin = useSelector(
-    (state) => state.branches.openadmin
+    (state) => state.admins.openadmin
   );
   const [formData, setFormData] = useState({
     name: "",
-    Email: "",
-    Number: "",
-    Password: "",
-    branch: "",
-    permission: ["Notifications"]
+    email: "",
+    number: "",
+    password: "",
+    branch: selectedBranchId,
   });
 
   const setopenmodeladmin = () => {
     dispatch(Setopenadmin(!openadmin)); 
   };
 
-  useEffect(() => {
-    dispatch(fetchBranches());
-  }, [dispatch]);
+
+  // useEffect(() => {
+  //   dispatch(fetchBranches());
+  // }, [dispatch]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSelectChange = (key, selectedKeys) => {
-    const selectedArray = Array.from(selectedKeys);
-    if (key === "branch") {
-      const selectedBranch = branches?.find(branch => branch._id === selectedArray[0]);
-      setFormData({ ...formData, branch: selectedBranch._id });
-    } else if (key === "permission") {
-      setFormData({ ...formData, permission: selectedArray });
-    }
-  };
+ 
 
   const validate = () => {
     if (!formData.name) return "Name is required";
-    if (!formData.Email) return "Email is required";
-    if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.Email))
+    if (!formData.email) return "Email is required";
+    if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email))
       return "Invalid email address";
     if (!formData.branch) return "Branch is required";
-    if (!formData.Number) {
+    if (!formData.number) {
       return "Phone Number is required";
-    } else if (!/^\d{10}$/.test(formData.Number)) {
+    } else if (!/^\d{10}$/.test(formData.number)) {
       return "Phone Number must be 10 digits";
     }
-    if (!formData.Password) return "Password is required";
-    if (formData.Password !== formData.confirmPassword)
+    if (!formData.password) return "Password is required";
+    if (formData.password !== formData.confirmPassword)
       return "Passwords do not match";
-    if (formData.permission.length === 0)
-      return "At least one permission is required";
     return null;
   };
 
@@ -78,14 +69,14 @@ const Addadmin = () => {
     }
     setLoading(true);
 
-    const result = await Createadminapi(formData);
-    console.log(result)
-    if (result.status) {
-      dispatch(fetchAdmins(selectedBranchId));
+    const response = await Createadmin(formData);
+    console.log(response.status)
+    if (response.status) {
+      // dispatch(fetchAdmins(selectedBranchId));
       setopenmodeladmin()
       setLoading(false);
     } else {
-      toast.error(result.message ||"Failed to create Admin");
+      toast.error("Failed to create Admin");
       setLoading(false);
     }
   };
@@ -104,7 +95,7 @@ const Addadmin = () => {
           onChange={handleInputChange}
           variant="bordered"
           radius="sm"
-          className="w-full rounded-none"
+          className="w-full rounded-md h-12"
           size="lg"
           placeholder="Full Name"
         />
@@ -113,12 +104,12 @@ const Addadmin = () => {
           type="tel"
           maxLength={10}
           max={10}
-          name="Number"
-          value={formData.Number}
+          name="number"
+          value={formData.number}
           onChange={handleInputChange}
           variant="bordered"
           radius="sm"
-          className="w-full rounded-none"
+          className="w-full rounded-md h-12"
           size="lg"
           placeholder="Phone Number"
         />
@@ -126,12 +117,12 @@ const Addadmin = () => {
       <div className="w-full grid lg:grid-cols-1 grid-cols-1 gap-4 place-content-center justify-between items-start ">
       <Input
           type="text"
-          name="Email"
-          value={formData.Email}
+          name="email"
+          value={formData.email}
           onChange={handleInputChange}
           variant="bordered"
           radius="sm"
-          className="w-full rounded-none"
+          className="w-full rounded-md h-12"
           size="lg"
           placeholder="Email"
         />
@@ -139,12 +130,12 @@ const Addadmin = () => {
       <div className="w-full grid lg:grid-cols-2 grid-cols-1 gap-4 place-content-center justify-between items-start ">
         <Input
           type="password"
-          name="Password"
-          value={formData.Password}
+          name="password"
+          value={formData.password}
           onChange={handleInputChange}
           variant="bordered"
           radius="sm"
-          className="w-full rounded-none"
+          className="w-full rounded-md h-12"
           size="lg"
           placeholder="Password"
         />
@@ -155,7 +146,7 @@ const Addadmin = () => {
           onChange={handleInputChange}
           variant="bordered"
           radius="sm"
-          className="w-full rounded-none"
+          className="w-full rounded-md h-12"
           size="lg"
           placeholder="Confirm Password"
         />
@@ -163,14 +154,53 @@ const Addadmin = () => {
       <div className="flex justify-center items-center w-full">
         <Button
           onPress={handleSubmit}
-          className="buttongradient text-white rounded-md w-60 uppercase font-semibold"
+          className="bg-[#146eb4] text-white rounded-md w-60 uppercase font-semibold"
         >
-         { loading?<span className="loader2"></span>:"Create"}
+         { loading?<span className="loader"></span>:"Create"}
         </Button>
       </div>
     </form>
 
-  
+    <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Define default options
+          className: "",
+          duration: 5000,
+          style: {
+            background: "white",
+            color: "#000",
+          },
+
+          // Default options for specific types
+          success: {
+            className: "ring-1 ring-red-400 bg-[#fde7e9] ",
+            duration: 3000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+            style: {
+              background: "#e8f8e9",
+              color: "#000",
+              border: "1px solid green",
+            },
+          },
+          error: {
+            className: "ring-1 ring-red-400 bg-[#fde7e9]",
+            duration: 3000,
+            style: {
+              background: "#fde7e9",
+              color: "#000",
+              border: "1px solid red",
+            },
+          },
+        }}
+      />
     </>
   );
 };
