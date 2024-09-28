@@ -165,11 +165,11 @@ export default function Managecategory() {
               <Eye size={15} />
             </span>
           </Tooltip>
-          <Tooltip content="Edit">
+          {/* <Tooltip content="Edit">
             <span  className="text-xs text-[#205093] cursor-pointer active:opacity-50">
               <Pencil size={15}/>
             </span>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip color="danger" content="Delete">
             <span className="text-xs text-red-500 cursor-pointer active:opacity-50">
               <Trash2 size={15}/>

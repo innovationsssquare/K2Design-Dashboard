@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link"
+import Link from "next/link";
 
 import {
   Cloud,
@@ -42,22 +42,23 @@ import {
   ShoppingCart,
   Users,
   Bell,
-  CircleUser
+  CircleUser,
 } from "lucide-react";
 import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-  } from "@/components/ui/sheet"
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import NotificationSheet from "./Notificationsheet";
 
 export default function Nav() {
   return (
-    <Navbar isBordered maxWidth="full" position="sticky" >
+    <Navbar isBordered maxWidth="full" position="sticky">
       <NavbarContent justify="start">
         <NavbarBrand className="mr-4">
           <Sheet>
@@ -118,7 +119,7 @@ export default function Nav() {
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="end">
-      <Sheet>
+        {/* <Sheet>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="">
                 <Bell className="h-5 w-5" />
@@ -129,13 +130,14 @@ export default function Nav() {
             <SheetHeader>Notifications</SheetHeader>
               
             </SheetContent>
-          </Sheet>
+          </Sheet> */}
+        <NotificationSheet />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="outline" className="">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
+            <Button size="icon" variant="outline" className="">
+              <CircleUser className="h-5 w-5" />
+              <span className="sr-only">Toggle Menu</span>
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -143,27 +145,31 @@ export default function Nav() {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                <Link href={"/profile"}>
+                  <span>Profile</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            <Link href={"/Team"}>
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <Users className="mr-2 h-4 w-4" />
+                  <span>Team</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </Link>
+            <DropdownMenuSeparator />
+            <Link href={"/Support"}>
               <DropdownMenuItem>
-                <Users className="mr-2 h-4 w-4" />
-                <span>Team</span>
+                <LifeBuoy className="mr-2 h-4 w-4" />
+                <span>Support</span>
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LifeBuoy className="mr-2 h-4 w-4" />
-              <span>Support</span>
-            </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
-              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

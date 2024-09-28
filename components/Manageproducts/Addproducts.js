@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input"; // For input fields
 import { Textarea } from "@/components/ui/textarea"; // For product description
-import { Trash } from "lucide-react"; // Icon for delete action
+import { Trash ,CircleX} from "lucide-react"; // Icon for delete action
 import {
   Modal,
   ModalContent,
@@ -20,43 +20,55 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchcategories } from "@/lib/ReduxSlice/CategorySlice";
+import { Createproductyapi } from "@/lib/API/Product";
+import { ScrollArea } from "../ui/scroll-area";
+import {Setopenproduct} from "@/lib/ReduxSlice/CategorySlice"
 
 const Addproducts = () => {
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
+  const dispatch = useDispatch();
+  const { category, status,openaproduct } = useSelector((state) => state.category);
+  const [filteredSubcategories, setFilteredSubcategories] = useState([]);
+
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSubcategory, setselectedSubcategory] = useState("");
   const [variants, setVariants] = useState([
-    { optionName: "", optionValue: "" },
+    { variantName: "", variantValue: "" },
   ]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+  const [productName, setProductName] = useState("");
+  const [price, setPrice] = useState("");
+  const [sku, setSku] = useState("");
+  const [description, setDescription] = useState("");
+  const [images, setImages] = useState([]);
+  const fileInputRef = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
+
   useEffect(() => {
-    // Fetch categories from API
-    const fetchCategories = async () => {
-      const response = await fetch("/api/categories");
-      const data = await response.json();
-      setCategories(data.categories);
-    };
-    fetchCategories();
+    dispatch(fetchcategories());
   }, []);
+
+  const openproducthandle=()=>{
+    dispatch(Setopenproduct(!openaproduct))
+  }
 
   useEffect(() => {
     if (selectedCategory) {
-      // Fetch subcategories based on selected category
-      const fetchSubcategories = async () => {
-        const response = await fetch(
-          `/api/subcategories?categoryId=${selectedCategory}`
-        );
-        const data = await response.json();
-        setSubcategories(data.subcategories);
-      };
-      fetchSubcategories();
+      // Find the selected category object
+      const selectedCat = category.find((cat) => cat._id === selectedCategory);
+      // Set the filtered subcategories based on the selected category
+      setFilteredSubcategories(selectedCat?.subcategories || []);
+    } else {
+      setFilteredSubcategories([]);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, category]);
 
   // Handler to dynamically add variant options
   const handleAddVariant = () => {
-    setVariants([...variants, { optionName: "", optionValue: "" }]);
+    setVariants([...variants, { variantName: "", variantValue: "" }]);
   };
 
   // Handler to remove a variant
@@ -71,15 +83,74 @@ const Addproducts = () => {
     setVariants(newVariants);
   };
 
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    setSelectedFiles(files);
+
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+  };
+
+  const handleRemoveImage = (index) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async () => {
+    for (let i = 0; i < variants.length; i++) {
+      if (!variants[i].variantName || !variants[i].variantValue) {
+        alert(`Please fill in all variant details for variant ${i + 1}`);
+        return; // Stop execution if validation fails
+      }
+    }
+
+    // Create FormData to handle file uploads and other data
+    const formData = new FormData();
+    formData.append("name", productName);
+    formData.append("subcategoryId", selectedSubcategory);
+    formData.append("price", price);
+    formData.append("sku", sku);
+    formData.append("description", description);
+
+    // Append images to FormData
+    selectedFiles.forEach((image) => formData.append("images", image));
+
+    // Append variants as JSON string
+    formData.append("variants", JSON.stringify(variants));
+
+    try {
+      // Send the form data to the API
+      const response = await Createproductyapi(formData);
+      if (response.status) {
+        alert("Product added successfully!");
+        // Clear form fields after successful submission
+        setProductName("");
+        setPrice("");
+        setSku("");
+        setDescription("");
+        setImages([]);
+        setVariants([{ variantName: "", variantValue: "" }]);
+        setSelectedCategory("");
+      } else {
+        alert(response.message || "Failed to add product.");
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+      alert("An error occurred while adding the product.");
+    }
+  };
+
   return (
     <>
-      <div>
+
+
+      <ScrollArea>
         <Card x-chunk="dashboard-07-chunk-2">
           <CardHeader>
             <CardTitle>Add Product</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2 w-full">
               {/* Category Field */}
               <div className="grid gap-3">
                 <Label htmlFor="category">Category</Label>
@@ -88,8 +159,8 @@ const Addproducts = () => {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
+                    {category.map((category) => (
+                      <SelectItem key={category._id} value={category._id}>
                         {category.name}
                       </SelectItem>
                     ))}
@@ -100,7 +171,7 @@ const Addproducts = () => {
               {/* Subcategory Field */}
               <div className="grid gap-3">
                 <Label htmlFor="subcategory">Subcategory (optional)</Label>
-                <Select>
+                <Select onValueChange={setselectedSubcategory}>
                   <SelectTrigger
                     id="subcategory"
                     aria-label="Select subcategory"
@@ -108,8 +179,8 @@ const Addproducts = () => {
                     <SelectValue placeholder="Select subcategory" />
                   </SelectTrigger>
                   <SelectContent>
-                    {subcategories.map((subcategory) => (
-                      <SelectItem key={subcategory.id} value={subcategory.id}>
+                    {filteredSubcategories.map((subcategory) => (
+                      <SelectItem key={subcategory._id} value={subcategory._id}>
                         {subcategory.name}
                       </SelectItem>
                     ))}
@@ -121,19 +192,35 @@ const Addproducts = () => {
                 {/* Product Name */}
                 <div className="grid gap-3">
                   <Label htmlFor="productName">Product Name</Label>
-                  <Input  id="productName" placeholder="Enter product name" />
+                  <Input
+                    id="productName"
+                    placeholder="Enter product name"
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
+                  />
                 </div>
 
                 {/* Price */}
                 <div className="grid gap-3">
                   <Label htmlFor="price">Price</Label>
-                  <Input id="price" type="number" placeholder="Enter price" />
+                  <Input
+                    id="price"
+                    type="number"
+                    placeholder="Enter price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
                 </div>
 
                 {/* SKU */}
                 <div className="grid gap-3">
                   <Label htmlFor="sku">SKU</Label>
-                  <Input id="sku" placeholder="Enter product SKU" />
+                  <Input
+                    id="sku"
+                    placeholder="Enter product SKU"
+                    value={sku}
+                    onChange={(e) => setSku(e.target.value)}
+                  />
                 </div>
               </div>
 
@@ -143,12 +230,9 @@ const Addproducts = () => {
                   className="min-h-16"
                   id="description"
                   placeholder="Enter product description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
-              </div>
-
-              <div className="grid gap-3 sm:col-span-2">
-                <Label htmlFor="image">Upload Image</Label>
-                <Input id="image" type="file" />
               </div>
 
               <div className="flex justify-start items-start w-full gap-4 col-span-3">
@@ -160,13 +244,55 @@ const Addproducts = () => {
                 </Button>
               </div>
 
+              <div className="space-y-2 grid gap-3 col-span-3 w-full ">
+                <Label htmlFor="images">Upload Images</Label>
+                <Input
+                  id="images"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+                <Button
+                  type="button"
+                  className="bg-[#146eb4] w-60 rounded-md text-white"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Choose Files
+                </Button>
+              </div>
+
+              {previews.length > 0 && (
+                <div className="space-y-2 grid gap-3 grid-cols-6 col-span-3 w-full justify-items-center items-center">
+                  {previews.map((preview, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-32 object-cover rounded"
+                      />
+                      <Button
+                        isIconOnly
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-0 right-0  text-red-500 bg-transparent rounded-full"
+                      >
+                      <CircleX/>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="flex justify-end items-center w-full gap-4 col-span-3">
-                {/* <Button  className="text-[#146eb4] rounded-md ring-1 ring-[#146eb4]  bg-white">
+                <Button onPress={openproducthandle} className="text-[#146eb4] rounded-md ring-1 ring-[#146eb4]  bg-white">
                   Cancel
-                </Button> */}
+                </Button>
                 <Button
                   className="bg-[#146eb4] w-60 rounded-md text-white"
-                  // onPress={handleSubmit}
+                  onPress={handleSubmit}
                 >
                   {/* {loading ? (
                     <span className="loader"></span>
@@ -181,12 +307,13 @@ const Addproducts = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </ScrollArea>
 
       <Modal
         backdrop="opaque"
         isOpen={isOpen}
-        isDismissable={false} isKeyboardDismissDisabled={true}
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
         onOpenChange={onOpenChange}
         motionProps={{
           variants: {
@@ -223,22 +350,22 @@ const Addproducts = () => {
                     <div key={index} className="flex items-center gap-3">
                       <Input
                         placeholder="Variant Name (e.g., Size, Color)"
-                        value={variant.optionName}
+                        value={variant.variantName}
                         onChange={(e) =>
                           handleVariantChange(
                             index,
-                            "optionName",
+                            "variantName",
                             e.target.value
                           )
                         }
                       />
                       <Input
                         placeholder="Variant Value (e.g., M, Red)"
-                        value={variant.optionValue}
+                        value={variant.variantValue}
                         onChange={(e) =>
                           handleVariantChange(
                             index,
-                            "optionValue",
+                            "variantValue",
                             e.target.value
                           )
                         }

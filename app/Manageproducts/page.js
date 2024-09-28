@@ -20,6 +20,8 @@ import {
 import { Plus, Search, ChevronDown, EllipsisVertical } from "lucide-react";
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import Addproducts from "@/components/Manageproducts/Addproducts";
+import { useDispatch,useSelector } from "react-redux";
+import {Setopenproduct} from "@/lib/ReduxSlice/CategorySlice"
 
 const statusColorMap = {
   active: "success",
@@ -51,6 +53,8 @@ export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 export default function Manageproducts() {
+  const dispatch = useDispatch();
+  const { openaproduct } = useSelector((state) => state.category);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = React.useState("inside");
   const [filterValue, setFilterValue] = React.useState("");
@@ -65,6 +69,10 @@ export default function Manageproducts() {
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
+
+  const openproducthandle=()=>{
+    dispatch(Setopenproduct(!openaproduct))
+  }
 
   const pages = Math.ceil(users.length / rowsPerPage);
 
@@ -208,7 +216,7 @@ export default function Manageproducts() {
           />
           <div className="flex gap-3">
             <Button
-              onPress={onOpen}
+              onPress={openproducthandle}
               className="bg-[#146eb4] text-background"
               endContent={<Plus />}
               size="sm"
@@ -327,9 +335,9 @@ export default function Manageproducts() {
         isDismissable={false}
         isKeyboardDismissDisabled={true}
         backdrop="blur"
-        isOpen={isOpen}
-        size="4xl"
-        onOpenChange={onOpenChange}
+        isOpen={openaproduct}
+        size="full"
+        onOpenChange={openproducthandle}
         motionProps={{
           variants: {
             enter: {
