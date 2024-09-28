@@ -89,7 +89,7 @@ export default function TeamManagement() {
                 <DialogHeader>
                   <DialogTitle>Add Team Member</DialogTitle>
                   <DialogDescription>
-                    Fill in the details of the new team member here. Click save when you're done.
+                    {`Fill in the details of the new team member here. Click save when you're done.`}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid w-full gap-4 py-4">
