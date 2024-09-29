@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input"; // For input fields
 import { Textarea } from "@/components/ui/textarea"; // For product description
-import { Trash ,CircleX} from "lucide-react"; // Icon for delete action
+import { Trash, CircleX } from "lucide-react"; // Icon for delete action
 import {
   Modal,
   ModalContent,
@@ -24,11 +24,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchcategories } from "@/lib/ReduxSlice/CategorySlice";
 import { Createproductyapi } from "@/lib/API/Product";
 import { ScrollArea } from "../ui/scroll-area";
-import {Setopenproduct} from "@/lib/ReduxSlice/CategorySlice"
+import { Setopenproduct } from "@/lib/ReduxSlice/CategorySlice";
+import toast, { Toaster } from "react-hot-toast";
 
 const Addproducts = () => {
   const dispatch = useDispatch();
-  const { category, status,openaproduct } = useSelector((state) => state.category);
+  const { category, status, openaproduct } = useSelector(
+    (state) => state.category
+  );
   const [filteredSubcategories, setFilteredSubcategories] = useState([]);
 
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -46,14 +49,15 @@ const Addproducts = () => {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [Loading,Setloading]=useState(false)
 
   useEffect(() => {
     dispatch(fetchcategories());
   }, []);
 
-  const openproducthandle=()=>{
-    dispatch(Setopenproduct(!openaproduct))
-  }
+  const openproducthandle = () => {
+    dispatch(Setopenproduct(!openaproduct));
+  };
 
   useEffect(() => {
     if (selectedCategory) {
@@ -97,9 +101,10 @@ const Addproducts = () => {
   };
 
   const handleSubmit = async () => {
+    Setloading(true)
     for (let i = 0; i < variants.length; i++) {
       if (!variants[i].variantName || !variants[i].variantValue) {
-        alert(`Please fill in all variant details for variant ${i + 1}`);
+        toast.error(`Please fill in all variant details for variant ${i + 1}`);
         return; // Stop execution if validation fails
       }
     }
@@ -122,7 +127,8 @@ const Addproducts = () => {
       // Send the form data to the API
       const response = await Createproductyapi(formData);
       if (response.status) {
-        alert("Product added successfully!");
+        toast.success("Product added successfully!");
+        Setloading(false)
         // Clear form fields after successful submission
         setProductName("");
         setPrice("");
@@ -131,19 +137,23 @@ const Addproducts = () => {
         setImages([]);
         setVariants([{ variantName: "", variantValue: "" }]);
         setSelectedCategory("");
+        setTimeout(() => {
+          dispatch(Setopenproduct(!openaproduct))
+        }, 1000);
       } else {
-        alert(response.message || "Failed to add product.");
+        toast.error("Failed to add product.");
+        Setloading(false)
+
       }
     } catch (error) {
       console.error("Error adding product:", error);
-      alert("An error occurred while adding the product.");
+      toast.error("An error occurred while adding the product.");
+      Setloading(false)
     }
   };
 
   return (
     <>
-
-
       <ScrollArea>
         <Card x-chunk="dashboard-07-chunk-2">
           <CardHeader>
@@ -171,7 +181,7 @@ const Addproducts = () => {
               {/* Subcategory Field */}
               <div className="grid gap-3">
                 <Label htmlFor="subcategory">Subcategory (optional)</Label>
-                <Select onValueChange={setselectedSubcategory}>
+                <Select disabled={!selectedCategory} onValueChange={setselectedSubcategory}>
                   <SelectTrigger
                     id="subcategory"
                     aria-label="Select subcategory"
@@ -235,7 +245,7 @@ const Addproducts = () => {
                 />
               </div>
 
-              <div className="flex justify-start items-start w-full gap-4 col-span-3">
+              <div className="flex flex-col justify-start items-start w-full gap-4 col-span-3">
                 <Button
                   className="bg-[#146eb4] w-60 rounded-md text-white"
                   onPress={onOpen}
@@ -243,7 +253,10 @@ const Addproducts = () => {
                   Add variants
                 </Button>
               </div>
-
+                {variants.map((value,i)=>(
+                  <p className="text-black grid grid-cols-3 col-span-3 ring-1 ring-gray-300 px-2 rounded-md p-1" key={i}>variants - {value.variantName}:{value.variantValue}</p>
+                ))}
+                 
               <div className="space-y-2 grid gap-3 col-span-3 w-full ">
                 <Label htmlFor="images">Upload Images</Label>
                 <Input
@@ -279,7 +292,7 @@ const Addproducts = () => {
                         onClick={() => handleRemoveImage(index)}
                         className="absolute top-0 right-0  text-red-500 bg-transparent rounded-full"
                       >
-                      <CircleX/>
+                        <CircleX />
                       </Button>
                     </div>
                   ))}
@@ -287,21 +300,19 @@ const Addproducts = () => {
               )}
 
               <div className="flex justify-end items-center w-full gap-4 col-span-3">
-                <Button onPress={openproducthandle} className="text-[#146eb4] rounded-md ring-1 ring-[#146eb4]  bg-white">
+                <Button
+                  onPress={openproducthandle}
+                  className="text-[#146eb4] rounded-md ring-1 ring-[#146eb4]  bg-white"
+                >
                   Cancel
                 </Button>
                 <Button
                   className="bg-[#146eb4] w-60 rounded-md text-white"
                   onPress={handleSubmit}
                 >
-                  {/* {loading ? (
+                  {Loading ? (
                     <span className="loader"></span>
-                  ) : isSelected ? (
-                    "Add Subcategory"
-                  ) : (
-                    "Add Category"
-                  )} */}
-                    Add Products
+                  ) : "Add Products"}
                 </Button>
               </div>
             </div>
@@ -403,6 +414,47 @@ const Addproducts = () => {
           )}
         </ModalContent>
       </Modal>
+
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Define default options
+          className: "",
+          duration: 5000,
+          style: {
+            background: "white",
+            color: "#000",
+          },
+
+          // Default options for specific types
+          success: {
+            className: "ring-1 ring-red-400 bg-[#fde7e9] ",
+            duration: 3000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+            style: {
+              background: "#e8f8e9",
+              color: "#000",
+              border: "1px solid green",
+            },
+          },
+          error: {
+            className: "ring-1 ring-red-400 bg-[#fde7e9]",
+            duration: 3000,
+            style: {
+              background: "#fde7e9",
+              color: "#000",
+              border: "1px solid red",
+            },
+          },
+        }}
+      />
     </>
   );
 };

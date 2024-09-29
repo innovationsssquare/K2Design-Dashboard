@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Mail, Phone, MapPin, Plus } from "lucide-react"
+import { Divider } from "@nextui-org/react"
 
 
 
@@ -71,12 +72,12 @@ export default function TeamManagement() {
 
   return (
     <div className="container mx-auto py-6">
-      <Card className="mb-6 border-[#146eb4]">
-        <CardHeader className="bg-[#146eb4] rounded-t-md text-white">
+      <Card className="mb-6 border-gray-300">
+        <CardHeader className="border-b border-gray-300 rounded-t-md text-[#1b181e]">
           <CardTitle className="text-2xl font-bold">Team Members</CardTitle>
-          <CardDescription className="text-blue-100">View and manage your team members</CardDescription>
+          <CardDescription className="text-gray-600">View and manage your team members</CardDescription>
         </CardHeader>
-        <CardContent className="mt-4">
+        <CardContent className="mt-4 p-4">
           <div className="flex justify-between items-center">
             <Input className="max-w-sm" placeholder="Search team members..." />
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -168,8 +169,8 @@ export default function TeamManagement() {
       </Card>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {teamMembers.map((member) => (
-          <Card key={member.id} className="border-[#146eb4]">
-            <CardHeader className="bg-[#146eb4] rounded-t-md text-white">
+          <Card key={member.id} className="border-gray-300">
+            <CardHeader className="border-b border-gray-300 rounded-t-md text-[#1b181e]">
               <div className="flex items-center space-x-4">
                 <Avatar>
                   <AvatarImage src={member.avatar} alt={member.name} />
@@ -177,7 +178,7 @@ export default function TeamManagement() {
                 </Avatar>
                 <div>
                   <CardTitle>{member.name}</CardTitle>
-                  <CardDescription className="text-blue-100">{member.role}</CardDescription>
+                  <CardDescription className="text-gray-600">{member.role}</CardDescription>
                 </div>
               </div>
             </CardHeader>

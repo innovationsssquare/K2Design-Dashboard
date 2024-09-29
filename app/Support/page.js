@@ -71,10 +71,10 @@ export default function SupportPage() {
 
   return (
     <div className="container mx-auto py-10">
-      <Card className="mb-8 border-[#146eb4]">
-        <CardHeader className="bg-[#146eb4] text-white">
+      <Card className="mb-8  border-gray-300">
+        <CardHeader className="border-b border-gray-300 text-[#1b181e]">
           <CardTitle className="text-2xl font-bold">Support</CardTitle>
-          <CardDescription className="text-blue-100">
+          <CardDescription className="text-gray-600">
             Submit a new support ticket or view your existing tickets
           </CardDescription>
         </CardHeader>
@@ -109,8 +109,8 @@ export default function SupportPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-[#146eb4]">
-        <CardHeader className="bg-[#146eb4] text-white">
+      <Card className=" border-gray-300">
+        <CardHeader className="text-[#1b181e] border-b border-gray-300">
           <CardTitle>Your Tickets</CardTitle>
         </CardHeader>
         <CardContent className="mt-4">
@@ -132,7 +132,7 @@ export default function SupportPage() {
                 <p>{ticket.description}</p>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="bg-[#146eb4] hover:bg-[#146eb4]/90 text-white hover:text-white">
                   View Details
                 </Button>
               </CardFooter>

@@ -142,14 +142,14 @@ export default function Nav() {
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
+                <Link href={"/profile"}>
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
-                <Link href={"/profile"}>
                   <span>Profile</span>
-                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
+                </Link>
             <DropdownMenuSeparator />
             <Link href={"/Team"}>
               <DropdownMenuGroup>
