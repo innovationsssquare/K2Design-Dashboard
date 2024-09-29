@@ -49,7 +49,7 @@ const Addproducts = () => {
   const fileInputRef = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [Loading,Setloading]=useState(false)
+  const [Loading, Setloading] = useState(false);
 
   useEffect(() => {
     dispatch(fetchcategories());
@@ -101,10 +101,41 @@ const Addproducts = () => {
   };
 
   const handleSubmit = async () => {
-    Setloading(true)
+    Setloading(true);
+
+    if (!productName.trim()) {
+      toast.error("Product name is required.");
+      Setloading(false);
+      return;
+    }
+  
+    if (!price || price <= 0) {
+      toast.error("Valid price is required.");
+      Setloading(false);
+      return;
+    }
+  
+    if (!sku.trim()) {
+      toast.error("SKU is required.");
+      Setloading(false);
+      return;
+    }
+  
+    // Validate subcategory selection if available
+    if (!selectedCategory) {
+      toast.error("Please select a category.");
+      Setloading(false);
+      return;
+    }
+  
+
+
+
+
     for (let i = 0; i < variants.length; i++) {
       if (!variants[i].variantName || !variants[i].variantValue) {
         toast.error(`Please fill in all variant details for variant ${i + 1}`);
+        Setloading(false);
         return; // Stop execution if validation fails
       }
     }
@@ -128,7 +159,7 @@ const Addproducts = () => {
       const response = await Createproductyapi(formData);
       if (response.status) {
         toast.success("Product added successfully!");
-        Setloading(false)
+        Setloading(false);
         // Clear form fields after successful submission
         setProductName("");
         setPrice("");
@@ -138,17 +169,16 @@ const Addproducts = () => {
         setVariants([{ variantName: "", variantValue: "" }]);
         setSelectedCategory("");
         setTimeout(() => {
-          dispatch(Setopenproduct(!openaproduct))
+          dispatch(Setopenproduct(!openaproduct));
         }, 1000);
       } else {
         toast.error("Failed to add product.");
-        Setloading(false)
-
+        Setloading(false);
       }
     } catch (error) {
       console.error("Error adding product:", error);
       toast.error("An error occurred while adding the product.");
-      Setloading(false)
+      Setloading(false);
     }
   };
 
@@ -181,7 +211,10 @@ const Addproducts = () => {
               {/* Subcategory Field */}
               <div className="grid gap-3">
                 <Label htmlFor="subcategory">Subcategory (optional)</Label>
-                <Select disabled={!selectedCategory} onValueChange={setselectedSubcategory}>
+                <Select
+                  disabled={!selectedCategory}
+                  onValueChange={setselectedSubcategory}
+                >
                   <SelectTrigger
                     id="subcategory"
                     aria-label="Select subcategory"
@@ -253,10 +286,15 @@ const Addproducts = () => {
                   Add variants
                 </Button>
               </div>
-                {variants.map((value,i)=>(
-                  <p className="text-black grid grid-cols-3 col-span-3 ring-1 ring-gray-300 px-2 rounded-md p-1" key={i}>variants - {value.variantName}:{value.variantValue}</p>
-                ))}
-                 
+              {variants.map((value, i) => (
+                <p
+                  className="text-black grid grid-cols-3 col-span-3 ring-1 ring-gray-300 px-2 rounded-md p-1"
+                  key={i}
+                >
+                  variants - {value.variantName}:{value.variantValue}
+                </p>
+              ))}
+
               <div className="space-y-2 grid gap-3 col-span-3 w-full ">
                 <Label htmlFor="images">Upload Images</Label>
                 <Input
@@ -310,9 +348,7 @@ const Addproducts = () => {
                   className="bg-[#146eb4] w-60 rounded-md text-white"
                   onPress={handleSubmit}
                 >
-                  {Loading ? (
-                    <span className="loader"></span>
-                  ) : "Add Products"}
+                  {Loading ? <span className="loader"></span> : "Add Products"}
                 </Button>
               </div>
             </div>
@@ -321,7 +357,7 @@ const Addproducts = () => {
       </ScrollArea>
 
       <Modal
-        backdrop="opaque"
+        backdrop="blur"
         isOpen={isOpen}
         isDismissable={false}
         isKeyboardDismissDisabled={true}
@@ -404,10 +440,10 @@ const Addproducts = () => {
 
               <ModalFooter>
                 <Button
-                  className="ring-[#146eb4] ring-1 bg-white  rounded-md text-[#146eb4]"
+                  className="bg-[#146eb4]  text-white  rounded-md "
                   onPress={onClose}
                 >
-                  Close
+                  ADD
                 </Button>
               </ModalFooter>
             </>

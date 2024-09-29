@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -16,38 +16,28 @@ import {
   Chip,
   User,
   Pagination,
+  Tooltip
 } from "@nextui-org/react";
 import { Plus, Search, ChevronDown, EllipsisVertical } from "lucide-react";
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import Addproducts from "@/components/Manageproducts/Addproducts";
-import { useDispatch,useSelector } from "react-redux";
-import {Setopenproduct} from "@/lib/ReduxSlice/CategorySlice"
+import { useDispatch, useSelector } from "react-redux";
+import { Setopenproduct } from "@/lib/ReduxSlice/CategorySlice";
+import {fetchproducts} from "@/lib/ReduxSlice/ProductSlice"
+import { Eye,Pencil,Trash2 } from "lucide-react";
 
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name","description","subcategoryId","actions"];
 const columns = [
   { name: "ID", uid: "id", sortable: true },
-  { name: "NAME", uid: "name", sortable: true },
-  { name: "AGE", uid: "age", sortable: true },
-  { name: "ROLE", uid: "role", sortable: true },
-  { name: "TEAM", uid: "team" },
-  { name: "EMAIL", uid: "email" },
-  { name: "STATUS", uid: "status", sortable: true },
-  { name: "ACTIONS", uid: "actions" },
+  { name: "Name", uid: "name", sortable: true },
+  { name: "Description", uid: "description"},
+  { name: "Category", uid: "subcategoryId"},
+  { name: "Action", uid: "actions"},
+ 
 ];
 
-const statusOptions = [
-  { name: "Active", uid: "active" },
-  { name: "Paused", uid: "paused" },
-  { name: "Vacation", uid: "vacation" },
-];
 
-const users=[]
 
 export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -55,8 +45,7 @@ export function capitalize(str) {
 export default function Manageproducts() {
   const dispatch = useDispatch();
   const { openaproduct } = useSelector((state) => state.category);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [scrollBehavior, setScrollBehavior] = React.useState("inside");
+  const { product } = useSelector((state) => state.product);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
@@ -70,11 +59,19 @@ export default function Manageproducts() {
   });
   const [page, setPage] = React.useState(1);
 
-  const openproducthandle=()=>{
-    dispatch(Setopenproduct(!openaproduct))
-  }
+console.log(product)
 
-  const pages = Math.ceil(users.length / rowsPerPage);
+  const openproducthandle = () => {
+    dispatch(Setopenproduct(!openaproduct));
+  };
+
+useEffect(() => {
+  dispatch(fetchproducts())
+}, [])
+
+
+
+  const pages = Math.ceil(product?.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -87,24 +84,24 @@ export default function Manageproducts() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = Array.isArray(product) ? [...product] : [];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredUsers = filteredUsers.filter((product) =>
+        product.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+      filteredUsers = filteredUsers.filter((product) =>
+        Array.from(statusFilter).includes(product.status)
       );
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [product, filterValue, statusFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -129,53 +126,36 @@ export default function Manageproducts() {
     switch (columnKey) {
       case "name":
         return (
-          <User
-            avatarProps={{ radius: "full", size: "sm", src: user.avatar }}
-            classNames={{
-              description: "text-default-500",
-            }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+          <p>{user?.name}</p>
         );
-      case "role":
+      case "subcategoryId":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
             <p className="text-bold text-tiny capitalize text-default-500">
-              {user.team}
+              {user?.subcategoryId?.name}
             </p>
           </div>
         );
-      case "status":
-        return (
-          <Chip
-            className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="dot"
-          >
-            {cellValue}
-          </Chip>
-        );
+     
       case "actions":
         return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown className="bg-background border-1 border-default-200">
-              <DropdownTrigger>
-                <Button isIconOnly radius="full" size="sm" variant="light">
-                  <EllipsisVertical className="text-default-400" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+          <div className=" flex justify-center items-center gap-4">
+          <Tooltip content="Details">
+            <span className="text-xs text-default-400 cursor-pointer active:opacity-50">
+              <Eye size={15} />
+            </span>
+          </Tooltip>
+          {/* <Tooltip content="Edit">
+            <span  className="text-xs text-[#205093] cursor-pointer active:opacity-50">
+              <Pencil size={15}/>
+            </span>
+          </Tooltip> */}
+          <Tooltip color="danger" content="Delete">
+            <span className="text-xs text-red-500 cursor-pointer active:opacity-50">
+              <Trash2 size={15}/>
+            </span>
+          </Tooltip>
+        </div>
         );
       default:
         return cellValue;
@@ -227,7 +207,7 @@ export default function Manageproducts() {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total {product?.length} products
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -249,7 +229,7 @@ export default function Manageproducts() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    product?.length,
     hasSearchFilter,
   ]);
 
@@ -322,7 +302,7 @@ export default function Manageproducts() {
         </TableHeader>
         <TableBody emptyContent={"No Products found"} items={sortedItems}>
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item._id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
