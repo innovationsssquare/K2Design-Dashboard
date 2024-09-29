@@ -46,6 +46,7 @@ export default function Manageproducts() {
   const dispatch = useDispatch();
   const { openaproduct } = useSelector((state) => state.category);
   const { product } = useSelector((state) => state.product);
+  const status = useSelector((state) => state.product.status); 
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
@@ -274,6 +275,11 @@ useEffect(() => {
 
   return (
     <>
+     {status=== "loading" ? (
+        <div className="w-full h-full col-span-3 flex justify-center items-center">
+          <span className="loader2"></span>
+        </div>
+      ) : (
       <Table
         className="p-4"
         isCompact
@@ -309,7 +315,7 @@ useEffect(() => {
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </Table>)}
 
       <Modal
         isDismissable={false}
