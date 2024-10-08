@@ -131,7 +131,7 @@ export default function OrderManagement() {
             <Table>
               <TableHeader className="bg-[#146eb4] text-white rounded-lg ">
                 <TableRow className="bg-[#146eb4] text-white rounded-lg ">
-                  <TableHead className="bg-[#146eb4] text-white rounded-l-lg ">Order #ID</TableHead>
+                  <TableHead className="bg-[#146eb4] text-white rounded-l-lg ">Order ID</TableHead>
                   <TableHead className="bg-[#146eb4] text-white  ">Customer</TableHead>
                   <TableHead className="bg-[#146eb4] text-white ">Status</TableHead>
                   <TableHead className="bg-[#146eb4] text-white ">Invoice</TableHead>
