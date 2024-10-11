@@ -126,7 +126,7 @@ export default function Managecategory() {
           <div className="flex justify-start items-center gap-2">
             <div className="bg-slate-200 p-1 rounded-md">
 
-             <Image height={12} width={24} src={user?.image} className="h-12 w-28 object-fill rounded-sm" alt="imagecat"/>
+             <Image height={100} width={100} src={user?.image} className="h-12 w-28 object-cover rounded-sm" alt="imagecat"/>
             </div>
             <div className="flex flex-col justify-start items-start gap-1">
               <p className="text-sm font-semibold">{cellValue}</p>

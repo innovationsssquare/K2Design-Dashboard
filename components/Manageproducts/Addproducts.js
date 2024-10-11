@@ -132,13 +132,13 @@ const Addproducts = () => {
 
 
 
-    for (let i = 0; i < variants.length; i++) {
-      if (!variants[i].variantName || !variants[i].variantValue) {
-        toast.error(`Please fill in all variant details for variant ${i + 1}`);
-        Setloading(false);
-        return; // Stop execution if validation fails
-      }
-    }
+    // for (let i = 0; i < variants.length; i++) {
+    //   if (!variants[i].variantName || !variants[i].variantValue) {
+    //     toast.error(`Please fill in all variant details for variant ${i + 1}`);
+    //     Setloading(false);
+    //     return; // Stop execution if validation fails
+    //   }
+    // }
 
     // Create FormData to handle file uploads and other data
     const formData = new FormData();
@@ -286,8 +286,8 @@ const Addproducts = () => {
                   Add variants
                 </Button>
               </div>
-              {variants.map((value, i) => (
-                <p
+              {variants.length >0 && variants.map((value, i) => (
+               value.variantName && <p
                   className="text-black grid grid-cols-3 col-span-3 ring-1 ring-gray-300 px-2 rounded-md p-1"
                   key={i}
                 >
