@@ -68,7 +68,7 @@ export default function Manageorders() {
   useEffect(() => {
     const markAllRead = async () => {
       const response = await markAllOrdersAsRead();
-      if (response.status) {
+      if (response?.status) {
         // Optionally, fetch the orders again to refresh the state
         dispatch(fetchorders());
       }
@@ -146,10 +146,11 @@ export default function Manageorders() {
           </div>
        
         );
-      case "subcategories":
+      case "user":
         return (
           <div className="flex flex-col">
             <p className="text-bold  capitalize text-black ">
+            {user?.user?.UserName}
             </p>
           </div>
         );
