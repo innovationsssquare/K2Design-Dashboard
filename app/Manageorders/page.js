@@ -1,373 +1,337 @@
-
-
-"use client"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+"use client";
+import React, { useEffect } from "react";
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
+  TableColumn,
+  TableBody,
   TableRow,
-} from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Printer, Search, FileText, Package, Eye, Edit, MoreHorizontal } from "lucide-react"
-import Image from "next/image"
+  TableCell,
+  Input,
+  Button,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Chip,
+  User,
+  Pagination,
+  Tooltip,
+  Divider,
+} from "@nextui-org/react";
+import { Plus, Search, ChevronDown, Eye,Pencil,Trash2 } from "lucide-react";
+import {Modal, ModalContent, useDisclosure} from "@nextui-org/react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchorders } from "../../lib/ReduxSlice/Orderslice";
+import Image from "next/image";
+import Link from "next/link";
+import { markAllOrdersAsRead } from "@/lib/API/Order";
 
-// Mock data for orders
-const orders = [
-  {
-    id: "ORD001",
-    customer: "John Doe",
-    product: "Business Cards",
-    quantity: 500,
-    status: "Pending",
-    total: "$49.99",
-    date: "2023-05-15",
-  },
-  {
-    id: "ORD002",
-    customer: "Jane Smith",
-    product: "Flyers",
-    quantity: 1000,
-    status: "Printing",
-    total: "$89.99",
-    date: "2023-05-14",
-  },
-  {
-    id: "ORD003",
-    customer: "Bob Johnson",
-    product: "Banners",
-    quantity: 2,
-    status: "Shipped",
-    total: "$129.99",
-    date: "2023-05-13",
-  },
-  {
-    id: "ORD003",
-    customer: "Bob Johnson",
-    product: "Banners",
-    quantity: 2,
-    status: "Shipped",
-    total: "$129.99",
-    date: "2023-05-13",
-  },
-  {
-    id: "ORD003",
-    customer: "Bob Johnson",
-    product: "Banners",
-    quantity: 2,
-    status: "Shipped",
-    total: "$129.99",
-    date: "2023-05-13",
-  },
-  {
-    id: "ORD003",
-    customer: "Bob Johnson",
-    product: "Banners",
-    quantity: 2,
-    status: "Shipped",
-    total: "$129.99",
-    date: "2023-05-13",
-  },
-  // Add more mock orders as needed
-]
 
-export default function OrderManagement() {
-  const [selectedOrder, setSelectedOrder] = useState(orders[0])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const filteredOrders = orders.filter(
-    (order) =>
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+const INITIAL_VISIBLE_COLUMNS = ["orderId", "user", "status","invoiceUrl" ,"actions"];
+const columns = [
+  { name: "OrderId", uid: "orderId", },
+  { name: "Customer", uid: "user", },
+  { name: "Status", uid: "status" },
+  { name: "Invoice", uid: "invoiceUrl" },
+  { name: "Actions", uid: "actions" },
+];
 
-  const handleStatusChange = (newStatus) => {
-    setSelectedOrder({ ...selectedOrder, status: newStatus })
-  }
 
-  const handleViewOrder = (order) => {
-    setSelectedOrder(order)
-    setIsDialogOpen(true)
-  }
+
+
+export function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+export default function Manageorders() {
+  const dispatch = useDispatch();
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+  const [filterValue, setFilterValue] = React.useState("");
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+  const [visibleColumns, setVisibleColumns] = React.useState(
+    new Set(INITIAL_VISIBLE_COLUMNS)
+  );
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [sortDescriptor, setSortDescriptor] = React.useState({
+    column: "age",
+    direction: "ascending",
+  });
+  const [page, setPage] = React.useState(1);
+
+  const order  = useSelector((state) => state.order.order);
+  const status = useSelector((state) => state.order.status); 
+  const error = useSelector((state) => state.order.error);
+
+  useEffect(() => {
+    const markAllRead = async () => {
+      const response = await markAllOrdersAsRead();
+      if (response.status) {
+        // Optionally, fetch the orders again to refresh the state
+        dispatch(fetchorders());
+      }
+    };
+  
+    markAllRead();
+  }, [dispatch]);
+  
+  
+
+  const pages = Math.ceil(order?.length / rowsPerPage);
+
+  const hasSearchFilter = Boolean(filterValue);
+
+  const headerColumns = React.useMemo(() => {
+    if (visibleColumns === "all") return columns;
+
+    return columns.filter((column) =>
+      Array.from(visibleColumns).includes(column.uid)
+    );
+  }, [visibleColumns]);
+
+  const filteredItems = React.useMemo(() => {
+    let filteredUsers = Array.isArray(order) ? [...order] : [];
+
+    if (hasSearchFilter) {
+      filteredUsers = filteredUsers.filter((Category) =>
+        Category.orderId.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+    if (
+      statusFilter !== "all" &&
+      Array.from(statusFilter).length !== statusOptions.length
+    ) {
+      filteredUsers = filteredUsers.filter((Category) =>
+        Array.from(statusFilter).includes(Category.status)
+      );
+    }
+
+    return filteredUsers;
+  }, [order, filterValue, statusFilter]);
+
+  const items = React.useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return filteredItems.slice(start, end);
+  }, [page, filteredItems, rowsPerPage]);
+
+  const sortedItems = React.useMemo(() => {
+    return [...items].sort((a, b) => {
+      const first = a[sortDescriptor.column];
+      const second = b[sortDescriptor.column];
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+    });
+  }, [sortDescriptor, items]);
+
+  const renderCell = React.useCallback((user, columnKey) => {
+    const cellValue = user[columnKey];
+
+    switch (columnKey) {
+      case "name":
+        return (
+          <div className="flex justify-start items-center gap-2">
+            <div className="bg-slate-200 p-1 rounded-md">
+
+             <Image height={12} width={24} src={user?.image} className="h-12 w-28 object-fill rounded-sm" alt="imagecat"/>
+            </div>
+            <div className="flex flex-col justify-start items-start gap-1">
+              <p className="text-sm font-semibold">{cellValue}</p>
+              <p className="text-xs font-medium text-default-500">{user?.description}</p>
+            </div>
+          </div>
+       
+        );
+      case "subcategories":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold  capitalize text-black ">
+            </p>
+          </div>
+        );
+      case "invoiceUrl":
+        return (
+          <div >
+          <Link download={user.invoiceUrl} href={user.invoiceUrl}>
+
+            <Button size="sm" className="text-white bg-[#146eb4]">
+              Download Invoice
+            </Button>
+          </Link>
+       
+          </div>
+        );
+      case "actions":
+        return (
+          <div className=" flex justify-center items-center gap-4">
+          <Tooltip content="Edit">
+            <span  className="text-xs text-[#205093] cursor-pointer active:opacity-50">
+              <Pencil size={15}/>
+            </span>
+          </Tooltip>
+          <Tooltip color="danger" content="Delete">
+            <span className="text-xs text-red-500 cursor-pointer active:opacity-50">
+              <Trash2 size={15}/>
+            </span>
+          </Tooltip>
+        </div>
+        );
+      default:
+        return cellValue;
+    }
+  }, []);
+
+  const onRowsPerPageChange = React.useCallback((e) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  }, []);
+
+  const onSearchChange = React.useCallback((value) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            classNames={{
+              base: "w-full sm:max-w-[44%]",
+              inputWrapper: "border-1 focus:border-[#146eb4] ",
+            }}
+            placeholder="Search by name..."
+            size="sm"
+            startContent={<Search className="text-default-300" />}
+            value={filterValue}
+            variant="bordered"
+            onClear={() => setFilterValue("")}
+            onValueChange={onSearchChange}
+          />
+        </div>
+        <Divider className="bg-gray-200"/>
+        <div className="flex justify-between items-center">
+          <span className="text-default-400 text-small">
+            Total {order?.length} Orders
+          </span>
+          <label className="flex items-center text-default-400 text-small">
+            Rows per page:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    );
+  }, [
+    filterValue,
+    statusFilter,
+    visibleColumns,
+    onSearchChange,
+    onRowsPerPageChange,
+    order?.length,
+    hasSearchFilter,
+  ]);
+
+  const bottomContent = React.useMemo(() => {
+    return (
+      <div className="py-2 px-2 flex justify-center items-center">
+        <Pagination
+          showControls
+          classNames={{
+            cursor: "bg-[#146eb4] text-background",
+          }}
+          color="default"
+          isDisabled={hasSearchFilter}
+          page={page}
+          total={pages}
+          variant="light"
+          onChange={setPage}
+        />
+       
+      </div>
+    );
+  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+
+  const classNames = React.useMemo(
+    () => ({
+      wrapper: ["max-h-screen", "w-full", "bg-transparent", "rounded-md"],
+      th: ["bg-[#146eb4]", "text-white", "border-b", "border-divider"],
+      td: [
+        // changing the rows border radius
+        "border-b",
+        "p-2",
+        "group-data-[first=true]:first:before:rounded-none",
+        "group-data-[first=true]:last:before:rounded-none",
+        // middle
+        "group-data-[middle=true]:before:rounded-none",
+        // last
+        "group-data-[last=true]:first:before:rounded-none",
+        "group-data-[last=true]:last:before:rounded-none",
+      ],
+    }),
+    []
+  );
 
   return (
-    <div className="w-full mx-auto px-4">
-      <Card>
-        <CardContent>
-          <div className="py-4">
-            <Input
-              type="search"
-              placeholder="Search orders..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <ScrollArea className="h-[70vh]">
-            <Table>
-              <TableHeader className="bg-[#146eb4] text-white rounded-lg ">
-                <TableRow className="bg-[#146eb4] text-white rounded-lg ">
-                  <TableHead className="bg-[#146eb4] text-white rounded-l-lg ">Order ID</TableHead>
-                  <TableHead className="bg-[#146eb4] text-white  ">Customer</TableHead>
-                  <TableHead className="bg-[#146eb4] text-white ">Status</TableHead>
-                  <TableHead className="bg-[#146eb4] text-white ">Invoice</TableHead>
-                  <TableHead className="bg-[#146eb4] text-white rounded-r-lg ">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrders.map((order) => (
-                  <TableRow key={order.id}>
-                  <TableCell className="flex items-center space-x-3">
-                      <Image
-                        src={order.image}
-                        alt={order.product}
-                        width={40}
-                        height={40}
-                        className="rounded-md"
-                      />
-                      <div>
-                        <div className="font-medium">#{order.id}</div>
-                        <div className="text-sm text-gray-500">{order.product}</div>
-                      </div>
-                    </TableCell>                    <TableCell>{order.customer}</TableCell>
-                    <TableCell>
-                      <Badge
-                      className={
-                          order.status === "Shipped"
-                            ? "bg-[#146eb4] text-white"
-                            : order.status === "Printing"
-                            ? "bg-[#e6f0f9] text-[#146eb4]"
-                            : "border-[#146eb4] text-[#146eb4]"
-                        }
-                        variant={
-                          order.status === "Shipped"
-                            ? "default"
-                            : order.status === "Printing"
-                            ? "secondary"
-                            : "outline"
-                        }
-                      >
-                        {order.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell><Badge className="bg-[#146eb4] hover:bg-[#146eb4]">Download Invoice</Badge></TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleViewOrder(order)}>
-                          <Eye className="h-4 w-4 text-[#146eb4]" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4 text-[#146eb4]" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4 text-[#146eb4]" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        </CardContent>
-      </Card>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-5xl">
-          <DialogHeader>
-            <DialogTitle>Order Details - {selectedOrder.id}</DialogTitle>
-            <DialogDescription>View and manage order details</DialogDescription>
-          </DialogHeader>
-          <Tabs defaultValue="details">
-            <TabsList>
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="invoice">Invoice</TabsTrigger>
-            </TabsList>
-            <TabsContent value="details">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Customer</Label>
-                  <Input value={selectedOrder.customer} readOnly />
-                </div>
-                <div>
-                  <Label>Product</Label>
-                  <Input value={selectedOrder.product} readOnly />
-                </div>
-                <div>
-                  <Label>Quantity</Label>
-                  <Input value={selectedOrder.quantity} readOnly />
-                </div>
-                <div>
-                  <Label>Total</Label>
-                  <Input value={selectedOrder.total} readOnly />
-                </div>
-                <div>
-                  <Label>Date</Label>
-                  <Input value={selectedOrder.date} readOnly />
-                </div>
-                <div>
-                  <Label>Status</Label>
-                  <Select
-                    value={selectedOrder.status}
-                    onValueChange={handleStatusChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Pending">Pending</SelectItem>
-                      <SelectItem value="Completed">Completed</SelectItem>
-                      {/* <SelectItem value="Printing">Printing</SelectItem>
-                      <SelectItem value="Shipped">Shipped</SelectItem>
-                      <SelectItem value="Delivered">Delivered</SelectItem> */}
-                      <SelectItem value="Cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </TabsContent>
-            <TabsContent value="invoice">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Invoice #{selectedOrder.id}</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Bill To</Label>
-                    <Input value={selectedOrder.customer} readOnly />
-                  </div>
-                  <div>
-                    <Label>Invoice Date</Label>
-                    <Input value={selectedOrder.date} readOnly />
-                  </div>
-                </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>{selectedOrder.product}</TableCell>
-                      <TableCell>{selectedOrder.quantity}</TableCell>
-                      <TableCell>
-                        $
-                        {(
-                          parseFloat(selectedOrder.total.slice(1)) /
-                          selectedOrder.quantity
-                        ).toFixed(2)}
-                      </TableCell>
-                      <TableCell>{selectedOrder.total}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-                <div className="flex justify-end">
-                  <Button className="text-white bg-[#146eb4] hover:bg-[#146eb4]">
-                    <FileText className="mr-2 h-4 w-4 " /> Download Invoice
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-            {/* <TabsContent value="printing">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Printing Details</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Paper Type</Label>
-                    <Input value="Glossy 100lb" readOnly />
-                  </div>
-                  <div>
-                    <Label>Print Size</Label>
-                    <Input value="3.5 x 2 inches" readOnly />
-                  </div>
-                  <div>
-                    <Label>Color Mode</Label>
-                    <Input value="Full Color (CMYK)" readOnly />
-                  </div>
-                  <div>
-                    <Label>Finishing</Label>
-                    <Input value="Matte Lamination" readOnly />
-                  </div>
-                </div>
-                <div className="flex space-x-4">
-                  <Button>
-                    <Printer className="mr-2 h-4 w-4" /> Print Preview
-                  </Button>
-                  <Button variant="outline">
-                    <Package className="mr-2 h-4 w-4" /> Prepare for Shipping
-                  </Button>
-                </div>
-              </div>
-            </TabsContent> */}
-          </Tabs>
-        </DialogContent>
-      </Dialog>
-    </div>
-  )
+    <>
+     {status=== "loading" ? (
+        <div className="w-full h-full col-span-3 flex justify-center items-center">
+          <span className="loader2"></span>
+        </div>
+      ) : (
+      <Table
+        className="p-4"
+        removeWrapper
+        isCompact
+        aria-label="Example table with custom cells, pagination and sorting"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={classNames}
+        selectedKeys={selectedKeys}
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No categories found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item._id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+     )}
+     
+    </>
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// "use client";
-// import React from "react";
-// import Lottie from "react-lottie";
-// import animationData from "../../public/Lottie/Documetlottie.json";
-
-// const Manageorders = () => {
-//   const defaultOptions = {
-//     loop: true,
-//     autoplay: true,
-//     animationData: animationData,
-//     rendererSettings: {
-//       preserveAspectRatio: "xMidYMid slice",
-//     },
-//   };
-//   return (
-//     <>
-//       <div className="flex flex-col gap-2 justify-center items-center w-full h-screen">
-//         <Lottie options={defaultOptions} height={100} width={100}></Lottie>
-//         <p className="text-[#1a181e] font-semibold ">Orders will appear here</p>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Manageorders;
