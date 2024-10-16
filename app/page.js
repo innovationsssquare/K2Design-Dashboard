@@ -43,7 +43,7 @@ export function Dashboard() {
 
   const socket = useMemo(
     () =>
-      io("http://localhost:8086",),
+      io("https://k2design-backend.onrender.com",),
     []
   );
 
