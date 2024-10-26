@@ -150,7 +150,7 @@ export default function Manageorders() {
         return (
           <div className="flex flex-col">
             <p className="text-bold  capitalize text-black ">
-            {user?.user?.UserName}
+            {user?.user?.UserName}  
             </p>
           </div>
         );

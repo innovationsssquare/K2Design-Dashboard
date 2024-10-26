@@ -54,7 +54,7 @@ export default function NotificationSheet() {
     };
   }, [dispatch, socket]);
 
-  const unreadOrders = order.filter((order) => order.isRead === false);
+  const unreadOrders = order?.filter((order) => order.isRead === false);
 
   const handleMarkAsRead = (orderId) => {
     dispatch(markOrderRead(orderId));
