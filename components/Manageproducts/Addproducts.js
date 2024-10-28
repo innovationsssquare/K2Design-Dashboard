@@ -218,7 +218,7 @@ const [openmodal,Setopenmodal]=useState(false)
     // Append variants as JSON string
     formData.append("variants", JSON.stringify(variants));
     formData.append("customizations", JSON.stringify(customizations));
-    formData.append("availableQuantities", JSON.stringify(availableQuantities));
+    formData.append("availableQuantities", availableQuantities);
     formData.append("qty", qty);
     try {
       // Send the form data to the API
